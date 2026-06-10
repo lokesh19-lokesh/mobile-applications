@@ -44,8 +44,15 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class HomeContent extends StatelessWidget {
+class HomeContent extends StatefulWidget {
   const HomeContent({super.key});
+
+  @override
+  State<HomeContent> createState() => _HomeContentState();
+}
+
+class _HomeContentState extends State<HomeContent> {
+  int _selectedCategoryIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -100,20 +107,30 @@ class HomeContent extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   itemCount: categories.length,
                   itemBuilder: (context, index) {
-                    final isSelected = index == 0;
-                    return Container(
-                      margin: const EdgeInsets.only(right: 8),
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
+                    final isSelected = index == _selectedCategoryIndex;
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: Material(
                         color: isSelected ? AppColors.primary : Colors.grey.shade200,
                         borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        categories[index],
-                        style: TextStyle(
-                          color: isSelected ? Colors.white : AppColors.textPrimary,
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                        clipBehavior: Clip.antiAlias,
+                        child: InkWell(
+                          onTap: () {
+                            setState(() {
+                              _selectedCategoryIndex = index;
+                            });
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            alignment: Alignment.center,
+                            child: Text(
+                              categories[index],
+                              style: TextStyle(
+                                color: isSelected ? Colors.white : AppColors.textPrimary,
+                                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     );
