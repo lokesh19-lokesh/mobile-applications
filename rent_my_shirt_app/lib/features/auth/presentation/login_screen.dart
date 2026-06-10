@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/theme/app_colors.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'otp_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -11,18 +12,34 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  bool _isLoading = false;
 
-  void _sendOtp() {
-    if (_phoneController.text.length >= 10) {
+  Future<void> _sendOtp() async {
+    final email = _emailController.text.trim();
+    if (email.isEmpty || !email.contains('@')) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a valid email address')),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+    try {
+      await Supabase.instance.client.auth.signInWithOtp(email: email);
+      
+      if (!mounted) return;
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const OtpScreen()),
+        MaterialPageRoute(builder: (context) => OtpScreen(email: email)),
       );
-    } else {
+    } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a valid 10-digit phone number')),
+        SnackBar(content: Text('Error: ${e.toString()}')),
       );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -50,7 +67,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                'Enter your mobile number to sign in',
+                'Enter your email address to sign in',
                 style: GoogleFonts.inter(
                   fontSize: 16,
                   color: AppColors.textSecondary,
@@ -58,12 +75,10 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 48),
               TextField(
-                controller: _phoneController,
-                keyboardType: TextInputType.phone,
-                maxLength: 10,
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
-                  labelText: 'Mobile Number',
-                  prefixText: '+91 ',
+                  labelText: 'Email Address',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -77,8 +92,10 @@ class _LoginScreenState extends State<LoginScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: _sendOtp,
-                  child: const Text('Send OTP'),
+                  onPressed: _isLoading ? null : _sendOtp,
+                  child: _isLoading 
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text('Send Magic Link / OTP'),
                 ),
               ),
             ],

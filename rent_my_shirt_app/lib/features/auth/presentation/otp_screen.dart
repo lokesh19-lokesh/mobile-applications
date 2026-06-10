@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/theme/app_colors.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../home/presentation/home_screen.dart';
 
 class OtpScreen extends StatefulWidget {
-  const OtpScreen({super.key});
+  final String email;
+  const OtpScreen({super.key, required this.email});
 
   @override
   State<OtpScreen> createState() => _OtpScreenState();
@@ -13,13 +15,32 @@ class OtpScreen extends StatefulWidget {
 class _OtpScreenState extends State<OtpScreen> {
   final TextEditingController _otpController = TextEditingController();
 
-  void _verifyOtp() {
+  bool _isLoading = false;
+
+  Future<void> _verifyOtp() async {
     if (_otpController.text.length == 6) {
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
-        (route) => false,
-      );
+      setState(() => _isLoading = true);
+      try {
+        await Supabase.instance.client.auth.verifyOTP(
+          email: widget.email,
+          token: _otpController.text,
+          type: OtpType.magiclink,
+        );
+        
+        if (!mounted) return;
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          (route) => false,
+        );
+      } catch (e) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Invalid OTP: ${e.toString()}')),
+        );
+      } finally {
+        if (mounted) setState(() => _isLoading = false);
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please enter a valid 6-digit OTP')),
@@ -51,7 +72,7 @@ class _OtpScreenState extends State<OtpScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                'We have sent a 6-digit OTP to your mobile number.',
+                'We have sent a 6-digit code to your email.',
                 style: GoogleFonts.inter(
                   fontSize: 16,
                   color: AppColors.textSecondary,
@@ -95,8 +116,10 @@ class _OtpScreenState extends State<OtpScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: _verifyOtp,
-                  child: const Text('Verify OTP'),
+                  onPressed: _isLoading ? null : _verifyOtp,
+                  child: _isLoading 
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text('Verify OTP'),
                 ),
               ),
             ],

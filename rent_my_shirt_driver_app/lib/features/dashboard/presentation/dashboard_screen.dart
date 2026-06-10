@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/theme/app_colors.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../profile/presentation/driver_profile_screen.dart';
 import 'map_navigation_screen.dart';
 
@@ -42,8 +43,44 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 }
 
-class OrdersListScreen extends StatelessWidget {
+class OrdersListScreen extends StatefulWidget {
   const OrdersListScreen({super.key});
+
+  @override
+  State<OrdersListScreen> createState() => _OrdersListScreenState();
+}
+
+class _OrdersListScreenState extends State<OrdersListScreen> {
+  List<dynamic> _orders = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchOrders();
+  }
+
+  Future<void> _fetchOrders() async {
+    try {
+      final response = await Supabase.instance.client
+          .from('orders')
+          .select('*, shirts(title)')
+          .inFilter('status', ['pending', 'assigned', 'picked_up'])
+          .order('created_at', ascending: false);
+          
+      if (mounted) {
+        setState(() {
+          _orders = response;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error fetching orders: $e');
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,25 +101,26 @@ class OrdersListScreen extends StatelessWidget {
           )
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          _buildTaskCard(
-            context: context,
-            type: 'PICKUP',
-            address: '123 Tech Park, Block B',
-            distance: '2.5 km',
-            time: '10 mins away',
-          ),
-          _buildTaskCard(
-            context: context,
-            type: 'DELIVERY',
-            address: '456 Rose Gardens, Apt 4A',
-            distance: '5.2 km',
-            time: '20 mins away',
-          ),
-        ],
-      ),
+      body: _isLoading 
+        ? const Center(child: CircularProgressIndicator(color: AppColors.accent))
+        : _orders.isEmpty 
+          ? Center(child: Text('No active tasks', style: GoogleFonts.inter(color: Colors.white70)))
+          : ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: _orders.length,
+              itemBuilder: (context, index) {
+                final order = _orders[index];
+                // For simplicity we infer type based on status
+                final isPickup = order['status'] == 'pending' || order['status'] == 'assigned';
+                return _buildTaskCard(
+                  context: context,
+                  type: isPickup ? 'PICKUP' : 'DELIVERY',
+                  address: isPickup ? order['pickup_address'] : (order['delivery_address'] ?? 'Customer Location'),
+                  distance: 'Near you',
+                  time: 'Active',
+                );
+              },
+            ),
     );
   }
 

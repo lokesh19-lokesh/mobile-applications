@@ -1,23 +1,50 @@
+import { useState, useEffect } from 'react';
+import { supabase } from '../supabaseClient';
+
 function Dashboard() {
+  const [orders, setOrders] = useState([]);
+  const [stats, setStats] = useState({ users: 0, rentals: 0, deposits: 0 });
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  async function fetchData() {
+    try {
+      const { data: ordersData } = await supabase.from('orders').select('*, shirts(title), profiles!orders_customer_id_fkey(full_name)').order('created_at', { ascending: false }).limit(5);
+      const { count: usersCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
+      const { count: activeRentals } = await supabase.from('orders').select('*', { count: 'exact', head: true }).in('status', ['picked_up']);
+      
+      setOrders(ordersData || []);
+      setStats({
+        users: usersCount || 0,
+        rentals: activeRentals || 0,
+        deposits: (usersCount || 0) * 5000,
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   return (
     <div>
       <h1>Dashboard Overview</h1>
       <div className="grid-cards">
         <div className="card">
           <div className="card-title">Total Users</div>
-          <div className="card-value">1,245</div>
+          <div className="card-value">{stats.users}</div>
         </div>
         <div className="card">
           <div className="card-title">Active Rentals</div>
-          <div className="card-value">342</div>
+          <div className="card-value">{stats.rentals}</div>
         </div>
         <div className="card">
           <div className="card-title">Deposits Held</div>
-          <div className="card-value">₹17,10,000</div>
+          <div className="card-value">₹{stats.deposits.toLocaleString('en-IN')}</div>
         </div>
         <div className="card">
           <div className="card-title">Monthly Revenue</div>
-          <div className="card-value">₹4,25,000</div>
+          <div className="card-value">₹--</div>
         </div>
       </div>
       
@@ -33,18 +60,21 @@ function Dashboard() {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>#ORD-8921</td>
-              <td>John Doe</td>
-              <td>White Slim Fit (M)</td>
-              <td><span className="badge rented">Out for Delivery</span></td>
-            </tr>
-            <tr>
-              <td>#ORD-8920</td>
-              <td>Jane Smith</td>
-              <td>Navy Blue Classic (S)</td>
-              <td><span className="badge available">Returned</span></td>
-            </tr>
+            {orders.map(order => (
+              <tr key={order.id}>
+                <td>{order.id.split('-')[0]}</td>
+                <td>{order.profiles?.full_name || 'Unknown'}</td>
+                <td>{order.shirts?.title || 'Unknown Shirt'}</td>
+                <td>
+                  <span className={`badge ${order.status === 'delivered' ? 'available' : 'rented'}`}>
+                    {order.status.replace('_', ' ').toUpperCase()}
+                  </span>
+                </td>
+              </tr>
+            ))}
+            {orders.length === 0 && (
+              <tr><td colSpan="4">No recent orders</td></tr>
+            )}
           </tbody>
         </table>
       </div>

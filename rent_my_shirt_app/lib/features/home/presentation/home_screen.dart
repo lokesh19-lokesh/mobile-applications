@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/theme/app_colors.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../cart/presentation/cart_screen.dart';
 import '../../profile/presentation/profile_screen.dart';
 import '../../shirts/presentation/shirt_details_screen.dart';
@@ -53,16 +54,35 @@ class HomeContent extends StatefulWidget {
 
 class _HomeContentState extends State<HomeContent> {
   int _selectedCategoryIndex = 0;
+  List<dynamic> _shirts = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchShirts();
+  }
+
+  Future<void> _fetchShirts() async {
+    try {
+      final response = await Supabase.instance.client.from('shirts').select();
+      if (mounted) {
+        setState(() {
+          _shirts = response;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error fetching shirts: $e');
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final categories = ['All', 'Tuxedos', 'Slim Fit', 'Classic', 'Designer'];
-    final mockShirts = [
-      {'name': 'Black Tuxedo Shirt', 'brand': 'Armani', 'price': '₹499/day', 'image': Icons.checkroom},
-      {'name': 'White Slim Fit', 'brand': 'Hugo Boss', 'price': '₹399/day', 'image': Icons.checkroom},
-      {'name': 'Navy Blue Classic', 'brand': 'Ralph Lauren', 'price': '₹349/day', 'image': Icons.checkroom},
-      {'name': 'Maroon Silk Blend', 'brand': 'Gucci', 'price': '₹899/day', 'image': Icons.checkroom},
-    ];
 
     return Scaffold(
       appBar: AppBar(
@@ -156,7 +176,9 @@ class _HomeContentState extends State<HomeContent> {
                 style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
-              GridView.builder(
+              _isLoading 
+                ? const Center(child: CircularProgressIndicator())
+                : GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -165,9 +187,9 @@ class _HomeContentState extends State<HomeContent> {
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
                 ),
-                itemCount: mockShirts.length,
+                itemCount: _shirts.length,
                 itemBuilder: (context, index) {
-                  final shirt = mockShirts[index];
+                  final shirt = _shirts[index];
                   return GestureDetector(
                     onTap: () {
                       Navigator.push(
@@ -197,7 +219,9 @@ class _HomeContentState extends State<HomeContent> {
                                 color: Colors.grey.shade100,
                                 borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
                               ),
-                              child: Icon(shirt['image'] as IconData, size: 64, color: AppColors.textSecondary),
+                              child: shirt['image_url'] != null && shirt['image_url'].toString().isNotEmpty
+                                ? Image.asset(shirt['image_url'], fit: BoxFit.cover)
+                                : Icon(Icons.checkroom, size: 64, color: AppColors.textSecondary),
                             ),
                           ),
                           Padding(
@@ -206,7 +230,7 @@ class _HomeContentState extends State<HomeContent> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  shirt['brand'] as String,
+                                  shirt['brand'] ?? 'Unknown',
                                   style: GoogleFonts.inter(
                                     fontSize: 12,
                                     color: AppColors.textSecondary,
@@ -215,7 +239,7 @@ class _HomeContentState extends State<HomeContent> {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  shirt['name'] as String,
+                                  shirt['title'] ?? 'Shirt',
                                   style: GoogleFonts.inter(
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
@@ -225,7 +249,7 @@ class _HomeContentState extends State<HomeContent> {
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
-                                  shirt['price'] as String,
+                                  '₹${shirt['price_per_day']}/day',
                                   style: GoogleFonts.inter(
                                     fontSize: 14,
                                     color: AppColors.accent,
