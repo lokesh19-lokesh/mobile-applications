@@ -96,6 +96,18 @@ class _HomeContentState extends State<HomeContent> {
                 ),
               ),
               const SizedBox(height: 24),
+              
+              // Hero Banners Section
+              SizedBox(
+                height: 180,
+                child: PageView(
+                  children: [
+                    _buildHeroBanner('assets/images/tuxedo_banner.png'),
+                    _buildHeroBanner('assets/images/summer_banner.png'),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
               Text(
                 'Categories',
                 style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.bold),
@@ -138,6 +150,7 @@ class _HomeContentState extends State<HomeContent> {
                 ),
               ),
               const SizedBox(height: 24),
+
               Text(
                 'Featured Collection',
                 style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.bold),
@@ -231,6 +244,26 @@ class _HomeContentState extends State<HomeContent> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildHeroBanner(String imagePath) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        image: DecorationImage(
+          image: AssetImage(imagePath),
+          fit: BoxFit.cover,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
       ),
     );
   }
