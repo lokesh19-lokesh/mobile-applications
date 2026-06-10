@@ -68,12 +68,14 @@ class OrdersListScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         children: [
           _buildTaskCard(
+            context: context,
             type: 'PICKUP',
             address: '123 Tech Park, Block B',
             distance: '2.5 km',
             time: '10 mins away',
           ),
           _buildTaskCard(
+            context: context,
             type: 'DELIVERY',
             address: '456 Rose Gardens, Apt 4A',
             distance: '5.2 km',
@@ -84,7 +86,7 @@ class OrdersListScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTaskCard({required String type, required String address, required String distance, required String time}) {
+  Widget _buildTaskCard({required BuildContext context, required String type, required String address, required String distance, required String time}) {
     final isPickup = type == 'PICKUP';
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
