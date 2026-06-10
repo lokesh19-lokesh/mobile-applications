@@ -3,6 +3,8 @@ import './index.css';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
 import Inventory from './components/Inventory';
+import Orders from './components/Orders';
+import Users from './components/Users';
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -13,8 +15,8 @@ function App() {
       <main className="main-content">
         {activeTab === 'dashboard' && <Dashboard />}
         {activeTab === 'inventory' && <Inventory />}
-        {activeTab === 'orders' && <div><h2>Orders Management</h2><p>Coming soon...</p></div>}
-        {activeTab === 'users' && <div><h2>User Management</h2><p>Coming soon...</p></div>}
+        {activeTab === 'orders' && <Orders />}
+        {activeTab === 'users' && <Users />}
       </main>
     </div>
   );

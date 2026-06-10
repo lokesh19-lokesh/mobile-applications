@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/theme/app_colors.dart';
+import 'security_deposit_screen.dart';
+import '../../../core/theme/app_colors.dart';
 import '../../auth/presentation/login_screen.dart';
 import 'rental_history_screen.dart';
 import 'wallet_screen.dart';
@@ -94,6 +96,9 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 32),
+            _buildListTile(Icons.wallet, 'Wallet & Deposit (₹5000 Paid)', () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const SecurityDepositScreen()));
+            }),
             _buildListTile(Icons.history, 'Rental History', () {
               Navigator.push(context, MaterialPageRoute(builder: (context) => const RentalHistoryScreen()));
             }),
