@@ -15,9 +15,9 @@ function Orders() {
         .from('orders')
         .select(`
           *,
-          shirts(title),
-          customer:profiles!orders_customer_id_fkey(full_name),
-          driver:profiles!orders_driver_id_fkey(full_name)
+          shirt_inventory(shirts(name)),
+          customer:customer_profiles!orders_user_id_fkey(first_name, last_name),
+          driver:delivery_agents!orders_delivery_agent_id_fkey(users(phone))
         `)
         .order('created_at', { ascending: false });
         
@@ -59,11 +59,11 @@ function Orders() {
               <tr key={order.id}>
                 <td>{order.id.split('-')[0]}</td>
                 <td>{new Date(order.created_at).toLocaleDateString()}</td>
-                <td>{order.customer?.full_name || 'Unknown'}</td>
-                <td>{order.shirts?.title || 'Unknown Item'}</td>
-                <td>₹{order.total_price}</td>
-                <td><span className={`badge ${['delivered', 'completed'].includes(order.status) ? 'success' : 'rented'}`}>{order.status.replace('_', ' ').toUpperCase()}</span></td>
-                <td>{order.driver?.full_name || 'Unassigned'}</td>
+                <td>{order.customer ? `${order.customer.first_name} ${order.customer.last_name || ''}` : 'Unknown'}</td>
+                <td>{order.shirt_inventory?.shirts?.name || 'Unknown Item'}</td>
+                <td>₹{order.total_amount}</td>
+                <td><span className={`badge ${['DELIVERED', 'COMPLETED'].includes(order.status) ? 'success' : 'rented'}`}>{order.status.replace('_', ' ').toUpperCase()}</span></td>
+                <td>{order.driver?.users?.phone || 'Unassigned'}</td>
                 <td><button className="btn">View</button></td>
               </tr>
             ))}

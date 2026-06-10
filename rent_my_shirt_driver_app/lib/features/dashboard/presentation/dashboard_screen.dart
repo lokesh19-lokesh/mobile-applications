@@ -64,8 +64,8 @@ class _OrdersListScreenState extends State<OrdersListScreen> {
     try {
       final response = await Supabase.instance.client
           .from('orders')
-          .select('*, shirts(title)')
-          .inFilter('status', ['pending', 'assigned', 'picked_up'])
+          .select('*, shirt_inventory(shirts(name))')
+          .inFilter('status', ['PENDING', 'ASSIGNED', 'PICKED_UP'])
           .order('created_at', ascending: false);
           
       if (mounted) {
@@ -111,13 +111,15 @@ class _OrdersListScreenState extends State<OrdersListScreen> {
               itemBuilder: (context, index) {
                 final order = _orders[index];
                 // For simplicity we infer type based on status
-                final isPickup = order['status'] == 'pending' || order['status'] == 'assigned';
+                final isPickup = order['status'] == 'PENDING' || order['status'] == 'ASSIGNED';
+                final shirtName = order['shirt_inventory']?['shirts']?['name'] ?? 'Unknown Item';
+                
                 return _buildTaskCard(
                   context: context,
                   type: isPickup ? 'PICKUP' : 'DELIVERY',
-                  address: isPickup ? order['pickup_address'] : (order['delivery_address'] ?? 'Customer Location'),
+                  address: isPickup ? (order['pickup_address'] ?? 'Warehouse') : (order['delivery_address'] ?? 'Customer Location'),
                   distance: 'Near you',
-                  time: 'Active',
+                  time: shirtName,
                 );
               },
             ),

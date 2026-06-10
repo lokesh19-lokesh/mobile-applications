@@ -11,9 +11,9 @@ function Dashboard() {
 
   async function fetchData() {
     try {
-      const { data: ordersData } = await supabase.from('orders').select('*, shirts(title), profiles!orders_customer_id_fkey(full_name)').order('created_at', { ascending: false }).limit(5);
-      const { count: usersCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
-      const { count: activeRentals } = await supabase.from('orders').select('*', { count: 'exact', head: true }).in('status', ['picked_up']);
+      const { data: ordersData } = await supabase.from('orders').select('*, shirt_inventory(shirts(name)), customer_profiles!orders_user_id_fkey(first_name, last_name)').order('created_at', { ascending: false }).limit(5);
+      const { count: usersCount } = await supabase.from('customer_profiles').select('*', { count: 'exact', head: true });
+      const { count: activeRentals } = await supabase.from('orders').select('*', { count: 'exact', head: true }).in('status', ['OUT_FOR_DELIVERY', 'DELIVERED', 'RETURN_REQUESTED']);
       
       setOrders(ordersData || []);
       setStats({
@@ -63,10 +63,10 @@ function Dashboard() {
             {orders.map(order => (
               <tr key={order.id}>
                 <td>{order.id.split('-')[0]}</td>
-                <td>{order.profiles?.full_name || 'Unknown'}</td>
-                <td>{order.shirts?.title || 'Unknown Shirt'}</td>
+                <td>{order.customer_profiles ? `${order.customer_profiles.first_name} ${order.customer_profiles.last_name || ''}` : 'Unknown'}</td>
+                <td>{order.shirt_inventory?.shirts?.name || 'Unknown Shirt'}</td>
                 <td>
-                  <span className={`badge ${order.status === 'delivered' ? 'available' : 'rented'}`}>
+                  <span className={`badge ${['DELIVERED', 'COMPLETED'].includes(order.status) ? 'available' : 'rented'}`}>
                     {order.status.replace('_', ' ').toUpperCase()}
                   </span>
                 </td>

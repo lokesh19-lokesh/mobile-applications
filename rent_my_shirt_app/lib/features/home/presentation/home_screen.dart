@@ -239,7 +239,7 @@ class _HomeContentState extends State<HomeContent> {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  shirt['title'] ?? 'Shirt',
+                                  shirt['name'] ?? 'Shirt',
                                   style: GoogleFonts.inter(
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
@@ -249,7 +249,7 @@ class _HomeContentState extends State<HomeContent> {
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
-                                  '₹${shirt['price_per_day']}/day',
+                                  '₹${shirt['price_1_day']}/day',
                                   style: GoogleFonts.inter(
                                     fontSize: 14,
                                     color: AppColors.accent,
