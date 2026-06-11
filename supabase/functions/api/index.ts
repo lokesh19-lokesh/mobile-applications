@@ -205,5 +205,61 @@ app.post('/api/v1/orders/:id/return', requireAuth, async (c) => {
   if (error) return c.json({ error: error.message }, 400)
   return c.json({ message: 'Return initiated', order: data })
 })
+// ----------------------------------------------------
+// DRIVER API
+// ----------------------------------------------------
+app.get('/api/v1/driver/orders/available', requireAuth, async (c) => {
+  const supabase = c.get('supabase')
+  const { data, error } = await supabase.from('orders')
+    .select('*, shirt_inventory(shirts(name))')
+    .in('status', ['PENDING', 'RETURN_REQUESTED'])
+    .order('created_at', { ascending: false })
+    
+  if (error) return c.json({ error: error.message }, 400)
+  return c.json(data)
+})
+
+app.post('/api/v1/driver/orders/:id/accept', requireAuth, async (c) => {
+  const supabase = c.get('supabase')
+  const user = c.get('user')
+  
+  const { data: agent, error: agentError } = await supabase.from('delivery_agents').select('id').eq('user_id', user.id).single()
+  if (agentError || !agent) return c.json({ error: 'Driver profile not found' }, 403)
+
+  const { data, error } = await supabase.from('orders')
+    .update({ delivery_agent_id: agent.id, status: 'ASSIGNED' })
+    .eq('id', c.req.param('id'))
+    .select().single()
+
+  if (error) return c.json({ error: error.message }, 400)
+  return c.json({ message: 'Order accepted', order: data })
+})
+
+app.post('/api/v1/driver/orders/:id/update-status', requireAuth, async (c) => {
+  const supabase = c.get('supabase')
+  const { status } = await c.req.json()
+  
+  const { data, error } = await supabase.from('orders')
+    .update({ status })
+    .eq('id', c.req.param('id'))
+    .select().single()
+
+  if (error) return c.json({ error: error.message }, 400)
+  return c.json({ message: 'Order status updated', order: data })
+})
+
+app.post('/api/v1/driver/location', requireAuth, async (c) => {
+  const supabase = c.get('supabase')
+  const user = c.get('user')
+  const { lat, lng } = await c.req.json()
+  
+  const { data, error } = await supabase.from('delivery_agents')
+    .update({ current_lat: lat, current_lng: lng })
+    .eq('user_id', user.id)
+    .select().single()
+
+  if (error) return c.json({ error: error.message }, 400)
+  return c.json({ message: 'Location updated', agent: data })
+})
 
 serve(app.fetch)
