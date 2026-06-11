@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/theme/app_colors.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../home/presentation/home_screen.dart';
+import '../../home/presentation/main_wrapper_screen.dart';
 
 class OtpScreen extends StatefulWidget {
   final String email;
@@ -30,7 +30,7 @@ class _OtpScreenState extends State<OtpScreen> {
         if (!mounted) return;
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          MaterialPageRoute(builder: (context) => const MainWrapperScreen()),
           (route) => false,
         );
       } catch (e) {
