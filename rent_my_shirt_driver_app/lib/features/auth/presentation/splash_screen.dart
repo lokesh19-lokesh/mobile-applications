@@ -39,7 +39,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              'RentMyShirt',
+              'Wearbox Driver',
               style: GoogleFonts.playfairDisplay(
                 color: Colors.white,
                 fontSize: 32,

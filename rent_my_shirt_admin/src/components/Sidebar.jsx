@@ -9,7 +9,7 @@ function Sidebar({ activeTab, setActiveTab }) {
   return (
     <aside className="sidebar">
       <div className="sidebar-header">
-        <h2>RentMyShirt Admin</h2>
+        <h2>Wearbox Admin</h2>
       </div>
       <ul className="sidebar-nav">
         {menuItems.map((item) => (

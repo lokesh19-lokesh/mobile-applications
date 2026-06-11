@@ -87,7 +87,7 @@ class _HomeContentState extends State<HomeContent> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'RentMyShirt',
+          'Wearbox',
           style: GoogleFonts.playfairDisplay(fontWeight: FontWeight.bold),
         ),
         actions: [

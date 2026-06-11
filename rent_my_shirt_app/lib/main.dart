@@ -24,7 +24,7 @@ class RentMyShirtApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'RentMyShirt',
+      title: 'Wearbox',
       theme: AppTheme.lightTheme,
       debugShowCheckedModeBanner: false,
       home: const SplashScreen(),
