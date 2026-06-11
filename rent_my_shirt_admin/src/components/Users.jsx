@@ -1,4 +1,55 @@
+import { useState, useEffect } from 'react';
+import { supabase } from '../supabaseClient';
+
 function Users() {
+  const [users, setUsers] = useState([]);
+  const [stats, setStats] = useState({ total: 0, deposits: 0, refunds: 0 });
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  async function fetchUsers() {
+    try {
+      const { data: profiles, error } = await supabase
+        .from('customer_profiles')
+        .select('*, users(phone), deposits(amount, status), orders(id)')
+        .order('created_at', { ascending: false });
+        
+      if (error) throw error;
+      
+      let totalDeposits = 0;
+      let totalRefunds = 0;
+      
+      const mappedUsers = profiles.map(profile => {
+        const activeOrders = profile.orders?.length || 0;
+        const deposit = profile.deposits?.[0]; // Assuming 1 deposit per user for demo
+        
+        if (deposit?.status === 'HELD') totalDeposits += parseFloat(deposit.amount || 5000);
+        if (deposit?.status === 'REFUNDED') totalRefunds += parseFloat(deposit.amount || 5000);
+        
+        return {
+          ...profile,
+          phone: profile.users?.phone,
+          activeOrders,
+          depositStatus: deposit ? deposit.status : 'UNPAID',
+          depositAmount: deposit ? deposit.amount : 0
+        };
+      });
+      
+      setUsers(mappedUsers);
+      setStats({
+        total: mappedUsers.length,
+        deposits: totalDeposits,
+        refunds: totalRefunds
+      });
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
@@ -12,15 +63,15 @@ function Users() {
       <div className="grid-cards" style={{ gridTemplateColumns: 'repeat(3, 1fr)', marginBottom: '2rem' }}>
         <div className="card">
           <div className="card-title">Total Active Users</div>
-          <div className="card-value">1,245</div>
+          <div className="card-value">{stats.total}</div>
         </div>
         <div className="card">
           <div className="card-title">Deposits Collected</div>
-          <div className="card-value">₹62,25,000</div>
+          <div className="card-value">₹{stats.deposits.toLocaleString()}</div>
         </div>
         <div className="card">
-          <div className="card-title">Refunds Pending</div>
-          <div className="card-value">₹25,000</div>
+          <div className="card-title">Refunds Processed</div>
+          <div className="card-value">₹{stats.refunds.toLocaleString()}</div>
         </div>
       </div>
       
@@ -38,33 +89,28 @@ function Users() {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>#USR-104</td>
-              <td>John Doe</td>
-              <td>+91 9876543210</td>
-              <td>1</td>
-              <td><span className="badge available">Paid (₹5000)</span></td>
-              <td><span className="badge available">Active</span></td>
-              <td><button className="btn">Manage</button></td>
-            </tr>
-            <tr>
-              <td>#USR-105</td>
-              <td>Sarah Connor</td>
-              <td>+91 9876543211</td>
-              <td>0</td>
-              <td><span className="badge rented">Refund Requested</span></td>
-              <td><span className="badge rented">Closing</span></td>
-              <td><button className="btn btn-primary" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'var(--danger)' }}>Process Refund</button></td>
-            </tr>
-            <tr>
-              <td>#USR-106</td>
-              <td>Bruce Wayne</td>
-              <td>+91 9876543212</td>
-              <td>2</td>
-              <td><span className="badge available">Paid (₹5000)</span></td>
-              <td><span className="badge available">Active</span></td>
-              <td><button className="btn">Manage</button></td>
-            </tr>
+            {isLoading ? (
+              <tr><td colSpan="7" style={{textAlign: 'center'}}>Loading users...</td></tr>
+            ) : users.map(user => (
+              <tr key={user.id}>
+                <td>{user.id.split('-')[0]}</td>
+                <td>{user.first_name} {user.last_name || ''}</td>
+                <td>{user.phone || 'N/A'}</td>
+                <td>{user.activeOrders}</td>
+                <td>
+                  <span className={`badge ${user.depositStatus === 'HELD' ? 'available' : 'rented'}`}>
+                    {user.depositStatus === 'HELD' ? `Paid (₹${user.depositAmount})` : user.depositStatus}
+                  </span>
+                </td>
+                <td><span className={`badge ${user.kyc_status === 'VERIFIED' ? 'available' : 'laundry'}`}>{user.kyc_status}</span></td>
+                <td>
+                  <button className="btn">Manage</button>
+                  {user.depositStatus === 'REFUND_REQUESTED' && (
+                    <button className="btn btn-primary" style={{ marginLeft: '0.5rem', padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'var(--danger)' }}>Process Refund</button>
+                  )}
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

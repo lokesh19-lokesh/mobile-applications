@@ -1,4 +1,29 @@
+import { useState, useEffect } from 'react';
+import { supabase } from '../supabaseClient';
+
 function Inventory() {
+  const [inventory, setInventory] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchInventory();
+  }, []);
+
+  async function fetchInventory() {
+    try {
+      const { data, error } = await supabase
+        .from('shirt_inventory')
+        .select('*, shirts(name)')
+        .order('created_at', { ascending: false });
+        
+      if (error) throw error;
+      setInventory(data || []);
+    } catch (error) {
+      console.error('Error fetching inventory:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
@@ -19,30 +44,22 @@ function Inventory() {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>QR-1001</td>
-              <td>White Slim Fit</td>
-              <td>M</td>
-              <td>4.8 / 5</td>
-              <td><span className="badge available">Available</span></td>
-              <td><button className="btn">Edit</button></td>
-            </tr>
-            <tr>
-              <td>QR-1002</td>
-              <td>Black Tuxedo</td>
-              <td>L</td>
-              <td>4.9 / 5</td>
-              <td><span className="badge rented">Rented</span></td>
-              <td><button className="btn">Edit</button></td>
-            </tr>
-            <tr>
-              <td>QR-1003</td>
-              <td>Navy Blue Classic</td>
-              <td>S</td>
-              <td>3.5 / 5</td>
-              <td><span className="badge laundry">Laundry</span></td>
-              <td><button className="btn">Edit</button></td>
-            </tr>
+            {isLoading ? (
+              <tr><td colSpan="6" style={{textAlign: 'center'}}>Loading inventory...</td></tr>
+            ) : inventory.map(item => (
+              <tr key={item.id}>
+                <td>{item.qr_code || item.id.split('-')[0]}</td>
+                <td>{item.shirts?.name || 'Unknown Shirt'}</td>
+                <td>{item.size}</td>
+                <td>{item.condition_rating} / 5</td>
+                <td>
+                  <span className={`badge ${item.status === 'AVAILABLE' ? 'available' : item.status === 'RENTED' ? 'rented' : 'laundry'}`}>
+                    {item.status}
+                  </span>
+                </td>
+                <td><button className="btn">Edit</button></td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
