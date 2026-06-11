@@ -4,7 +4,7 @@ import '../../wardrobe/presentation/wardrobe_tab.dart';
 import '../../deliveries/presentation/deliveries_tab.dart';
 import '../../rewards/presentation/rewards_tab.dart';
 import '../../profile/presentation/profile_screen.dart';
-import '../../../core/theme/app_colors.dart';
+
 
 class MainWrapperScreen extends StatefulWidget {
   const MainWrapperScreen({super.key});

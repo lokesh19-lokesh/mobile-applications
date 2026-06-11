@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../auth/presentation/login_screen.dart';
+import '../../subscription/presentation/subscription_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -24,8 +25,8 @@ class ProfileScreen extends StatelessWidget {
                 children: [
                   const CircleAvatar(
                     radius: 30,
-                    backgroundColor: AppColors.divider,
-                    backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=11'),
+                    backgroundColor: AppColors.primary,
+                    child: Icon(Icons.person, color: Colors.white, size: 30),
                   ),
                   const SizedBox(width: 16),
                   Column(
@@ -47,7 +48,9 @@ class ProfileScreen extends StatelessWidget {
                   _buildListTile(Icons.straighten, 'My Measurements', () {}),
                   _buildListTile(Icons.location_on_outlined, 'Delivery Addresses', () {}),
                   _buildListTile(Icons.payment, 'Payment Methods', () {}),
-                  _buildListTile(Icons.autorenew, 'Subscription', () {}),
+                  _buildListTile(Icons.autorenew, 'Subscription', () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const SubscriptionScreen()));
+                  }),
                   _buildListTile(Icons.card_giftcard, 'Refer & Earn', () {}),
                   _buildListTile(Icons.help_outline, 'Help & Support', () {}),
                   _buildListTile(Icons.settings_outlined, 'Settings', () {}),

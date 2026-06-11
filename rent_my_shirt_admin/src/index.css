@@ -1,7 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
 :root {
-  --primary: #1E1E1E;
+  --primary: #E31837; /* Wearbox Red */
   --accent: #D4AF37;
   --background: #F8F9FA;
   --surface: #FFFFFF;
@@ -19,14 +19,14 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Poppins', sans-serif;
   background-color: var(--background);
   color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
 }
 
 h1, h2, h3, h4 {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Poppins', sans-serif;
   color: var(--primary);
   margin-bottom: 1rem;
 }
@@ -112,7 +112,7 @@ h1, h2, h3, h4 {
 
 .card-value {
   font-size: 2rem;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Poppins', sans-serif;
   font-weight: 700;
   color: var(--primary);
 }

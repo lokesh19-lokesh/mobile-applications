@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
+import 'build_box_screen.dart';
 
 class WardrobeTab extends StatefulWidget {
   const WardrobeTab({super.key});
@@ -38,7 +39,9 @@ class _WardrobeTabState extends State<WardrobeTab> {
           ],
         ),
         floatingActionButton: FloatingActionButton.extended(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const BuildBoxScreen()));
+          },
           backgroundColor: AppColors.primary,
           label: const Text('Build My Box'),
           icon: const Icon(Icons.checkroom),
@@ -68,7 +71,7 @@ class _WardrobeTabState extends State<WardrobeTab> {
                     setState(() => _selectedFilter = filter);
                   },
                   backgroundColor: AppColors.background,
-                  selectedColor: AppColors.primary.withOpacity(0.1),
+                  selectedColor: AppColors.primary.withValues(alpha: 0.1),
                   labelStyle: TextStyle(
                     color: isSelected ? AppColors.primary : AppColors.textPrimary,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,

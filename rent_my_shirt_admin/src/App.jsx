@@ -5,9 +5,14 @@ import Dashboard from './components/Dashboard';
 import Inventory from './components/Inventory';
 import Orders from './components/Orders';
 import Users from './components/Users';
+import LandingPage from './components/LandingPage';
 
 function App() {
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeTab, setActiveTab] = useState('landing');
+
+  if (activeTab === 'landing') {
+    return <LandingPage onLogin={() => setActiveTab('dashboard')} />;
+  }
 
   return (
     <div className="app-container">
