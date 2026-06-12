@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../auth/presentation/login_screen.dart';
+import '../../home/presentation/main_wrapper_screen.dart';
 import '../../subscription/presentation/subscription_screen.dart';
 import '../../dashboard/data/dashboard_provider.dart';
 import 'measurements_screen.dart';
@@ -12,11 +13,22 @@ import 'referral_screen.dart';
 import 'support_screen.dart';
 import 'settings_screen.dart';
 
+import '../../auth/presentation/guest_login_prompt.dart';
+
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final session = Supabase.instance.client.auth.currentSession;
+    if (session == null) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(title: const Text('Profile'), centerTitle: true, backgroundColor: AppColors.surface),
+        body: const GuestLoginPrompt(),
+      );
+    }
+
     final dashboardState = ref.watch(dashboardProvider);
     final currentUser = Supabase.instance.client.auth.currentUser;
     final email = currentUser?.email ?? 'user@example.com';
@@ -107,7 +119,7 @@ class ProfileScreen extends ConsumerWidget {
                     if (context.mounted) {
                       Navigator.pushAndRemoveUntil(
                         context,
-                        MaterialPageRoute(builder: (context) => const LoginScreen()),
+                        MaterialPageRoute(builder: (context) => const MainWrapperScreen()),
                         (route) => false,
                       );
                     }

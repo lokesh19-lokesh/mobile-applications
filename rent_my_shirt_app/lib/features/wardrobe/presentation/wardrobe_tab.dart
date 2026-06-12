@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import 'build_box_screen.dart';
-
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../auth/presentation/login_screen.dart';
 class WardrobeTab extends StatefulWidget {
   const WardrobeTab({super.key});
 
@@ -40,7 +41,12 @@ class _WardrobeTabState extends State<WardrobeTab> {
         ),
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => const BuildBoxScreen()));
+            final session = Supabase.instance.client.auth.currentSession;
+            if (session == null) {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+            } else {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const BuildBoxScreen()));
+            }
           },
           backgroundColor: AppColors.primary,
           label: const Text('Build My Box'),

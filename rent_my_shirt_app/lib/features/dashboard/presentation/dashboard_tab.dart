@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/theme/app_colors.dart';
 import '../data/dashboard_provider.dart';
 
@@ -91,8 +92,9 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, stack) => Center(child: Text('Error loading dashboard: $err')),
         data: (data) {
+          final isGuest = Supabase.instance.client.auth.currentSession == null;
           final profile = data.profile ?? {};
-          final firstName = profile['first_name'] ?? 'User';
+          final firstName = isGuest ? 'Guest' : (profile['first_name'] ?? 'User');
           final planName = profile['plan_name'] ?? 'Professional';
           final planPrice = profile['plan_price'] ?? 2499;
           final planDetails = profile['plan_details'] ?? '4 Shirts + 1 Tee';
@@ -190,22 +192,26 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
                         // Greeting
                         Text('Hey $firstName 👋', style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
                         const SizedBox(height: 8),
-                        const Text('Your next box arrives in', style: TextStyle(fontSize: 16, color: AppColors.textSecondary)),
-                        const SizedBox(height: 24),
-                        
-                        // Timer Boxes
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            _buildPremiumTimeBox(_days, 'DAYS'),
-                            const Text(':', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textSecondary)),
-                            _buildPremiumTimeBox(_hours, 'HRS'),
-                            const Text(':', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textSecondary)),
-                            _buildPremiumTimeBox(_minutes, 'MIN'),
-                            const Text(':', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textSecondary)),
-                            _buildPremiumTimeBox(_seconds, 'SEC'),
-                          ],
-                        ),
+                        if (isGuest) ...[
+                          const Text('Subscribe today to get fresh shirts delivered to your door every week.', style: TextStyle(fontSize: 16, color: AppColors.textSecondary)),
+                        ] else ...[
+                          const Text('Your next box arrives in', style: TextStyle(fontSize: 16, color: AppColors.textSecondary)),
+                          const SizedBox(height: 24),
+                          
+                          // Timer Boxes
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              _buildPremiumTimeBox(_days, 'DAYS'),
+                              const Text(':', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textSecondary)),
+                              _buildPremiumTimeBox(_hours, 'HRS'),
+                              const Text(':', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textSecondary)),
+                              _buildPremiumTimeBox(_minutes, 'MIN'),
+                              const Text(':', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textSecondary)),
+                              _buildPremiumTimeBox(_seconds, 'SEC'),
+                            ],
+                          ),
+                        ],
                         
                         const SizedBox(height: 40),
                         

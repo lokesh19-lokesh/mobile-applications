@@ -1,11 +1,23 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../auth/presentation/guest_login_prompt.dart';
+
 class RewardsTab extends StatelessWidget {
   const RewardsTab({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final session = Supabase.instance.client.auth.currentSession;
+    if (session == null) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(title: const Text('Rewards'), centerTitle: true, backgroundColor: AppColors.surface),
+        body: const GuestLoginPrompt(),
+      );
+    }
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
