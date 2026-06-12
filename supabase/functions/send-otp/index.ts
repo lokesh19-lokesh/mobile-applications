@@ -31,10 +31,16 @@ serve(async (req) => {
 
     // 2. If registration data is provided, create the user explicitly first
     if (fullName) {
+      const nameParts = fullName.trim().split(' ');
+      const firstName = nameParts[0];
+      const lastName = nameParts.slice(1).join(' ');
+
       const { error: createError } = await supabaseClient.auth.admin.createUser({
         email: email,
         user_metadata: {
           full_name: fullName,
+          first_name: firstName,
+          last_name: lastName,
           phone: phone,
           company: company,
           id_card_url: idCardUrl
@@ -42,8 +48,13 @@ serve(async (req) => {
         email_confirm: false
       });
       
-      // We ignore "User already exists" errors because they might be re-requesting the OTP
-      if (createError && !createError.message.includes('already exists') && !createError.message.includes('already registered')) {
+      if (createError) {
+        if (createError.message.includes('already exists') || createError.message.includes('already registered')) {
+          return new Response(JSON.stringify({ error: 'ACCOUNT_EXISTS' }), {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 400,
+          });
+        }
         console.error('Error creating new user:', createError);
         return new Response(JSON.stringify({ error: createError.message }), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },

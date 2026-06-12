@@ -96,7 +96,28 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       );
       
       if (response.status != 200) {
-        throw Exception(response.data['error'] ?? 'Registration failed. Try again.');
+        final error = response.data['error'] ?? 'Registration failed. Try again.';
+        if (error == 'ACCOUNT_EXISTS') {
+          if (!mounted) return;
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Account Exists'),
+              content: const Text('An account with this email or phone number is already registered. Please go to Login.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context); // Close dialog
+                    Navigator.pop(context); // Go back to login screen
+                  },
+                  child: const Text('Go to Login', style: TextStyle(color: AppColors.primary)),
+                ),
+              ],
+            ),
+          );
+          return;
+        }
+        throw Exception(error);
       }
       
       if (!mounted) return;
