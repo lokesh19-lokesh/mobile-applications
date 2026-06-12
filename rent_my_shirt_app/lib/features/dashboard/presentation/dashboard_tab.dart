@@ -18,14 +18,15 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
   late String _days;
   late String _hours;
   late String _minutes;
+  late String _seconds;
 
   @override
   void initState() {
     super.initState();
     _calculateNextDelivery();
     _updateCountdown();
-    // Update every minute
-    _timer = Timer.periodic(const Duration(minutes: 1), (timer) {
+    // Update every second for a live countdown feel
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (mounted) {
         setState(() {
           _updateCountdown();
@@ -58,6 +59,7 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
       _days = '00';
       _hours = '00';
       _minutes = '00';
+      _seconds = '00';
       _calculateNextDelivery(); // recalculate if passed
       return;
     }
@@ -65,6 +67,7 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
     _days = difference.inDays.toString().padLeft(2, '0');
     _hours = (difference.inHours % 24).toString().padLeft(2, '0');
     _minutes = (difference.inMinutes % 60).toString().padLeft(2, '0');
+    _seconds = (difference.inSeconds % 60).toString().padLeft(2, '0');
   }
 
   String _getCurrentWeekDates() {
@@ -84,18 +87,6 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
 
     return Scaffold(
       backgroundColor: AppColors.surface,
-      appBar: AppBar(
-        leading: const Padding(
-          padding: EdgeInsets.all(8.0),
-          child: CircleAvatar(
-            backgroundColor: AppColors.primary,
-            child: Text('WB', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-          ),
-        ),
-        actions: [
-          IconButton(icon: const Icon(Icons.notifications_none), onPressed: () {}),
-        ],
-      ),
       body: dashboardState.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, stack) => Center(child: Text('Error loading dashboard: $err')),
@@ -112,103 +103,251 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
             onRefresh: () async {
               return ref.refresh(dashboardProvider.future);
             },
-            child: SingleChildScrollView(
+            child: CustomScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Hey $firstName 👋', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 8),
-                  const Text('Your next box arrives in', style: TextStyle(fontSize: 16, color: AppColors.textSecondary)),
-                  const SizedBox(height: 24),
-                  Row(
-                    children: [
-                      _buildTimeBox(_days, 'DAYS'),
-                      const Text(' : ', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-                      _buildTimeBox(_hours, 'HRS'),
-                      const Text(' : ', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-                      _buildTimeBox(_minutes, 'MIN'),
-                    ],
-                  ),
-                  const SizedBox(height: 32),
-                  const Text('Current Plan', style: TextStyle(fontSize: 14, color: AppColors.textSecondary)),
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: AppColors.divider),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              slivers: [
+                SliverAppBar(
+                  expandedHeight: 380.0,
+                  pinned: true,
+                  backgroundColor: AppColors.primary,
+                  elevation: 0,
+                  flexibleSpace: FlexibleSpaceBar(
+                    background: Stack(
+                      fit: StackFit.expand,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(planName, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                            Text('₹$planPrice /month', style: const TextStyle(fontSize: 14, color: AppColors.textSecondary)),
-                            const SizedBox(height: 4),
-                            Text(planDetails, style: const TextStyle(fontSize: 14, color: AppColors.textSecondary)),
-                          ],
+                        Image.asset(
+                          'assets/images/hero_image.png',
+                          fit: BoxFit.cover,
+                          alignment: Alignment.topCenter,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(color: AppColors.primary);
+                          },
                         ),
-                        TextButton(
-                          onPressed: () {},
-                          child: const Text('Manage Plan >', style: TextStyle(color: AppColors.primary)),
+                        // Gradient overlay for text readability
+                        Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.black.withOpacity(0.0),
+                                Colors.black.withOpacity(0.7),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          left: 24,
+                          bottom: 40,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'PREMIUM WORKWEAR. ZERO HASSLE.',
+                                style: TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.5,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              const Text(
+                                'Your Wardrobe.\nOn Subscription.',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 36,
+                                  fontWeight: FontWeight.w900,
+                                  height: 1.1,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 32),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('This Week\'s Box', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                      Text(_getCurrentWeekDates(), style: const TextStyle(fontSize: 14, color: AppColors.textSecondary)),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  // Dynamic shirts row
-                  if (orders.isEmpty)
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Text(
-                        'No active shirts in your box right now. Tap "View Box" to add some!',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: AppColors.textSecondary),
-                      ),
-                    )
-                  else
-                    SizedBox(
-                      height: 100,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: orders.length,
-                        itemBuilder: (context, index) {
-                          final order = orders[index];
-                          final inventory = order['shirt_inventory'];
-                          final colorString = inventory != null ? inventory['color'] as String? : null;
-                          return _buildShirtThumbnail(_getColorFromString(colorString));
-                        },
-                      ),
+                  leading: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: CircleAvatar(
+                      backgroundColor: Colors.white,
+                      child: Text('WB', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
                     ),
-                  
-                  const SizedBox(height: 24),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
+                  ),
+                  actions: [
+                    IconButton(
+                      icon: const Icon(Icons.notifications_none, color: Colors.white),
                       onPressed: () {},
-                      child: const Text('View Box'),
+                    ),
+                  ],
+                ),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Greeting
+                        Text('Hey $firstName 👋', style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 8),
+                        const Text('Your next box arrives in', style: TextStyle(fontSize: 16, color: AppColors.textSecondary)),
+                        const SizedBox(height: 24),
+                        
+                        // Timer Boxes
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            _buildPremiumTimeBox(_days, 'DAYS'),
+                            const Text(':', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textSecondary)),
+                            _buildPremiumTimeBox(_hours, 'HRS'),
+                            const Text(':', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textSecondary)),
+                            _buildPremiumTimeBox(_minutes, 'MIN'),
+                            const Text(':', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textSecondary)),
+                            _buildPremiumTimeBox(_seconds, 'SEC'),
+                          ],
+                        ),
+                        
+                        const SizedBox(height: 40),
+                        
+                        // Plan Section
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text('Choose Your Plan', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                            TextButton(
+                              onPressed: () {},
+                              child: const Text('View all', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Container(
+                          padding: const EdgeInsets.all(24),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(color: AppColors.primary, width: 2),
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(color: AppColors.primary.withOpacity(0.1), blurRadius: 20, offset: const Offset(0, 8)),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Align(
+                                alignment: Alignment.topCenter,
+                                child: Text('MOST POPULAR', style: TextStyle(color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+                              ),
+                              const SizedBox(height: 16),
+                              Text(planName, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                              const SizedBox(height: 4),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text('₹$planPrice', style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w900)),
+                                  const Padding(
+                                    padding: EdgeInsets.only(bottom: 4.0),
+                                    child: Text(' /month', style: TextStyle(fontSize: 16, color: AppColors.textSecondary)),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 16),
+                              Text(planDetails, style: const TextStyle(fontSize: 16, color: AppColors.textSecondary)),
+                              const SizedBox(height: 24),
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  onPressed: () {},
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.primary,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(vertical: 16),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                  ),
+                                  child: const Text('Manage Plan', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        
+                        const SizedBox(height: 40),
+                        
+                        // This Week's Box
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('New In This Week', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                                const SizedBox(height: 4),
+                                Text(_getCurrentWeekDates(), style: const TextStyle(fontSize: 14, color: AppColors.textSecondary)),
+                              ],
+                            ),
+                            TextButton(
+                              onPressed: () {},
+                              child: const Text('View all', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        
+                        if (orders.isEmpty)
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(32),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Column(
+                              children: [
+                                Icon(Icons.checkroom, size: 48, color: Colors.grey.shade400),
+                                const SizedBox(height: 16),
+                                const Text(
+                                  'Your box is empty.\nTap below to build your wardrobe.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: AppColors.textSecondary, height: 1.5, fontSize: 16),
+                                ),
+                              ],
+                            ),
+                          )
+                        else
+                          SizedBox(
+                            height: 140,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: orders.length,
+                              itemBuilder: (context, index) {
+                                final order = orders[index];
+                                final inventory = order['shirt_inventory'];
+                                final colorString = inventory != null ? inventory['color'] as String? : null;
+                                return _buildPremiumShirtThumbnail(_getColorFromString(colorString));
+                              },
+                            ),
+                          ),
+                        
+                        const SizedBox(height: 32),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () {},
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 18),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            ),
+                            child: const Text('View Box', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                          ),
+                        ),
+                        const SizedBox(height: 48),
+                      ],
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           );
         },
@@ -216,25 +355,49 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
     );
   }
 
-  Widget _buildTimeBox(String value, String label) {
-    return Column(
-      children: [
-        Text(value, style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-        Text(label, style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
-      ],
+  Widget _buildPremiumTimeBox(String value, String label) {
+    return Container(
+      width: 65,
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.15),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Text(value, style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w900, height: 1.0)),
+          const SizedBox(height: 6),
+          Text(label, style: const TextStyle(fontSize: 10, color: AppColors.textSecondary, fontWeight: FontWeight.bold)),
+        ],
+      ),
     );
   }
 
-  Widget _buildShirtThumbnail(Color color) {
+  Widget _buildPremiumShirtThumbnail(Color color) {
     return Container(
-      width: 80,
-      margin: const EdgeInsets.only(right: 12),
+      width: 100,
+      margin: const EdgeInsets.only(right: 16),
       decoration: BoxDecoration(
         color: color,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.divider),
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
-      child: const Center(child: Icon(Icons.checkroom, color: Colors.black54)),
+      child: const Center(
+        child: Icon(Icons.checkroom, color: Colors.black54, size: 40),
+      ),
     );
   }
 
