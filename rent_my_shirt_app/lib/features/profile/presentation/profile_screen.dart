@@ -5,6 +5,12 @@ import '../../../core/theme/app_colors.dart';
 import '../../auth/presentation/login_screen.dart';
 import '../../subscription/presentation/subscription_screen.dart';
 import '../../dashboard/data/dashboard_provider.dart';
+import 'measurements_screen.dart';
+import 'addresses_screen.dart';
+import 'payment_methods_screen.dart';
+import 'referral_screen.dart';
+import 'support_screen.dart';
+import 'settings_screen.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -66,15 +72,27 @@ class ProfileScreen extends ConsumerWidget {
                 color: AppColors.surface,
                 child: Column(
                   children: [
-                    _buildListTile(Icons.straighten, 'My Measurements', () {}),
-                    _buildListTile(Icons.location_on_outlined, 'Delivery Addresses', () {}),
-                    _buildListTile(Icons.payment, 'Payment Methods', () {}),
+                    _buildListTile(Icons.straighten, 'My Measurements', () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const MeasurementsScreen()));
+                    }),
+                    _buildListTile(Icons.location_on_outlined, 'Delivery Addresses', () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const AddressesScreen()));
+                    }),
+                    _buildListTile(Icons.payment, 'Payment Methods', () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const PaymentMethodsScreen()));
+                    }),
                     _buildListTile(Icons.autorenew, 'Subscription', () {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => const SubscriptionScreen()));
                     }),
-                    _buildListTile(Icons.card_giftcard, 'Refer & Earn', () {}),
-                    _buildListTile(Icons.help_outline, 'Help & Support', () {}),
-                    _buildListTile(Icons.settings_outlined, 'Settings', () {}),
+                    _buildListTile(Icons.card_giftcard, 'Refer & Earn', () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const ReferralScreen()));
+                    }),
+                    _buildListTile(Icons.help_outline, 'Help & Support', () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const SupportScreen()));
+                    }),
+                    _buildListTile(Icons.settings_outlined, 'Settings', () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingsScreen()));
+                    }),
                   ],
                 ),
               ),
@@ -84,12 +102,15 @@ class ProfileScreen extends ConsumerWidget {
                 child: ListTile(
                   leading: const Icon(Icons.logout, color: AppColors.error),
                   title: const Text('Log Out', style: TextStyle(color: AppColors.error, fontWeight: FontWeight.bold)),
-                  onTap: () {
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (context) => const LoginScreen()),
-                      (route) => false,
-                    );
+                  onTap: () async {
+                    await Supabase.instance.client.auth.signOut();
+                    if (context.mounted) {
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (context) => const LoginScreen()),
+                        (route) => false,
+                      );
+                    }
                   },
                 ),
               ),
