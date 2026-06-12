@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../core/theme/app_colors.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'otp_screen.dart';
+import 'registration_screen.dart';
 
 
 class LoginScreen extends StatefulWidget {
@@ -27,7 +28,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
     setState(() => _isLoading = true);
     try {
-      await Supabase.instance.client.auth.signInWithOtp(email: email);
+      final response = await Supabase.instance.client.functions.invoke(
+        'send-otp',
+        body: {'email': email},
+      );
+      
+      if (response.status != 200) {
+        throw Exception(response.data['error'] ?? 'Failed to send OTP');
+      }
       
       if (!mounted) return;
       Navigator.push(
@@ -36,12 +44,48 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     } catch (e) {
       if (!mounted) return;
+      
+      String errorMessage = e.toString();
+      
+      // If Supabase fails to auto-create the user, it means they aren't registered
+      if (errorMessage.contains('Database error saving new user') || errorMessage.contains('User not found')) {
+        _showUserDoesNotExistPopup();
+        return;
+      }
+      
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${e.toString()}')),
+        SnackBar(content: Text('Error: $errorMessage')),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
+  }
+
+  void _showUserDoesNotExistPopup() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('User Not Found'),
+        content: const Text('This email is not registered. Please create a new account to continue.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context); // Close dialog
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const RegistrationScreen()),
+              );
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
+            child: const Text('Register Now', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -97,6 +141,18 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: _isLoading 
                       ? const CircularProgressIndicator(color: Colors.white)
                       : const Text('Send Magic Link / OTP'),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Center(
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const RegistrationScreen()),
+                    );
+                  },
+                  child: const Text('New User? Create an Account', style: TextStyle(color: AppColors.primary)),
                 ),
               ),
             ],
