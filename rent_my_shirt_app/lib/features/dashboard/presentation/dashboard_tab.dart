@@ -1,13 +1,85 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import '../../../core/theme/app_colors.dart';
 import '../data/dashboard_provider.dart';
 
-class DashboardTab extends ConsumerWidget {
+class DashboardTab extends ConsumerStatefulWidget {
   const DashboardTab({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<DashboardTab> createState() => _DashboardTabState();
+}
+
+class _DashboardTabState extends ConsumerState<DashboardTab> {
+  Timer? _timer;
+  late DateTime _nextDeliveryDate;
+  late String _days;
+  late String _hours;
+  late String _minutes;
+
+  @override
+  void initState() {
+    super.initState();
+    _calculateNextDelivery();
+    _updateCountdown();
+    // Update every minute
+    _timer = Timer.periodic(const Duration(minutes: 1), (timer) {
+      if (mounted) {
+        setState(() {
+          _updateCountdown();
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void _calculateNextDelivery() {
+    // Next delivery is next Monday at 9 AM
+    final now = DateTime.now();
+    int daysUntilMonday = DateTime.monday - now.weekday;
+    if (daysUntilMonday <= 0) {
+      daysUntilMonday += 7;
+    }
+    _nextDeliveryDate = DateTime(now.year, now.month, now.day + daysUntilMonday, 9, 0, 0);
+  }
+
+  void _updateCountdown() {
+    final now = DateTime.now();
+    final difference = _nextDeliveryDate.difference(now);
+    
+    if (difference.isNegative) {
+      _days = '00';
+      _hours = '00';
+      _minutes = '00';
+      _calculateNextDelivery(); // recalculate if passed
+      return;
+    }
+
+    _days = difference.inDays.toString().padLeft(2, '0');
+    _hours = (difference.inHours % 24).toString().padLeft(2, '0');
+    _minutes = (difference.inMinutes % 60).toString().padLeft(2, '0');
+  }
+
+  String _getCurrentWeekDates() {
+    final now = DateTime.now();
+    // Find Monday of this week
+    final monday = now.subtract(Duration(days: now.weekday - 1));
+    // Find Sunday of this week
+    final sunday = monday.add(const Duration(days: 6));
+    
+    final formatter = DateFormat('dd MMM');
+    return '${formatter.format(monday)} - ${formatter.format(sunday)}';
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final dashboardState = ref.watch(dashboardProvider);
 
     return Scaffold(
@@ -47,11 +119,11 @@ class DashboardTab extends ConsumerWidget {
                 const SizedBox(height: 24),
                 Row(
                   children: [
-                    _buildTimeBox('03', 'DAYS'),
+                    _buildTimeBox(_days, 'DAYS'),
                     const Text(' : ', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-                    _buildTimeBox('12', 'HRS'),
+                    _buildTimeBox(_hours, 'HRS'),
                     const Text(' : ', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-                    _buildTimeBox('45', 'MIN'),
+                    _buildTimeBox(_minutes, 'MIN'),
                   ],
                 ),
                 const SizedBox(height: 32),
@@ -87,7 +159,7 @@ class DashboardTab extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text('This Week\'s Box', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                    const Text('19 May - 25 May', style: TextStyle(fontSize: 14, color: AppColors.textSecondary)),
+                    Text(_getCurrentWeekDates(), style: const TextStyle(fontSize: 14, color: AppColors.textSecondary)),
                   ],
                 ),
                 const SizedBox(height: 16),

@@ -17,8 +17,24 @@ class _OtpScreenState extends State<OtpScreen> {
 
   bool _isLoading = false;
 
+  void _showErrorPopup(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title, style: const TextStyle(color: AppColors.primary)),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK', style: TextStyle(color: AppColors.primary)),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _verifyOtp() async {
-    if (_otpController.text.length == 6) {
+    if (_otpController.text.length >= 6) {
       setState(() => _isLoading = true);
       try {
         await Supabase.instance.client.auth.verifyOTP(
@@ -35,16 +51,21 @@ class _OtpScreenState extends State<OtpScreen> {
         );
       } catch (e) {
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Invalid OTP: ${e.toString()}')),
-        );
+        
+        // Extract a cleaner error message if it's an AuthApiException
+        String errorMessage = e.toString();
+        if (errorMessage.contains('Token has expired or is invalid')) {
+          errorMessage = 'The verification code you entered is invalid or has expired. Please request a new one.';
+        } else if (errorMessage.startsWith('AuthApiException')) {
+          errorMessage = errorMessage.split(',').first.replaceAll('AuthApiException(message: ', '');
+        }
+        
+        _showErrorPopup('Verification Failed', errorMessage);
       } finally {
         if (mounted) setState(() => _isLoading = false);
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a valid 6-digit OTP')),
-      );
+      _showErrorPopup('Invalid Input', 'Please enter a valid verification code');
     }
   }
 
@@ -72,7 +93,7 @@ class _OtpScreenState extends State<OtpScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                'We have sent a 6-digit code to your email.',
+                'We have sent a verification code to your email.',
                 style: GoogleFonts.inter(
                   fontSize: 16,
                   color: AppColors.textSecondary,
@@ -82,11 +103,11 @@ class _OtpScreenState extends State<OtpScreen> {
               TextField(
                 controller: _otpController,
                 keyboardType: TextInputType.number,
-                maxLength: 6,
+                maxLength: 10,
                 textAlign: TextAlign.center,
                 style: GoogleFonts.inter(
                   fontSize: 24,
-                  letterSpacing: 8,
+                  letterSpacing: 4,
                   fontWeight: FontWeight.bold,
                 ),
                 decoration: InputDecoration(

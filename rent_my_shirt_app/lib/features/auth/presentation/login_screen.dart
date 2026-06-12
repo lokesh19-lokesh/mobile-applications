@@ -17,12 +17,26 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   bool _isLoading = false;
 
+  void _showErrorPopup(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title, style: const TextStyle(color: AppColors.primary)),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK', style: TextStyle(color: AppColors.primary)),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _sendOtp() async {
     final email = _emailController.text.trim();
     if (email.isEmpty || !email.contains('@')) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a valid email address')),
-      );
+      _showErrorPopup('Invalid Input', 'Please enter a valid email address');
       return;
     }
 
@@ -53,9 +67,12 @@ class _LoginScreenState extends State<LoginScreen> {
         return;
       }
       
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $errorMessage')),
-      );
+      // Clean up the error message
+      if (errorMessage.startsWith('Exception: ')) {
+        errorMessage = errorMessage.substring(11);
+      }
+      
+      _showErrorPopup('Login Failed', errorMessage);
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
