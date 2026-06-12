@@ -31,65 +31,71 @@ class ProfileScreen extends ConsumerWidget {
           final lastName = profile['last_name'] ?? '';
           final fullName = '$firstName $lastName'.trim();
 
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                Container(
-                  color: AppColors.surface,
-                  padding: const EdgeInsets.all(24.0),
-                  child: Row(
-                    children: [
-                      const CircleAvatar(
-                        radius: 30,
-                        backgroundColor: AppColors.primary,
-                        child: Icon(Icons.person, color: Colors.white, size: 30),
-                      ),
-                      const SizedBox(width: 16),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(fullName.isEmpty ? 'User' : fullName, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                          const SizedBox(height: 4),
-                          Text(email, style: const TextStyle(color: AppColors.textSecondary)),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-            const SizedBox(height: 16),
-            Container(
-              color: AppColors.surface,
+          return RefreshIndicator(
+            onRefresh: () async {
+              return ref.refresh(dashboardProvider.future);
+            },
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
               child: Column(
                 children: [
-                  _buildListTile(Icons.straighten, 'My Measurements', () {}),
-                  _buildListTile(Icons.location_on_outlined, 'Delivery Addresses', () {}),
-                  _buildListTile(Icons.payment, 'Payment Methods', () {}),
-                  _buildListTile(Icons.autorenew, 'Subscription', () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const SubscriptionScreen()));
-                  }),
-                  _buildListTile(Icons.card_giftcard, 'Refer & Earn', () {}),
-                  _buildListTile(Icons.help_outline, 'Help & Support', () {}),
-                  _buildListTile(Icons.settings_outlined, 'Settings', () {}),
+                  Container(
+                    color: AppColors.surface,
+                    padding: const EdgeInsets.all(24.0),
+                    child: Row(
+                      children: [
+                        const CircleAvatar(
+                          radius: 30,
+                          backgroundColor: AppColors.primary,
+                          child: Icon(Icons.person, color: Colors.white, size: 30),
+                        ),
+                        const SizedBox(width: 16),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(fullName.isEmpty ? 'User' : fullName, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                            const SizedBox(height: 4),
+                            Text(email, style: const TextStyle(color: AppColors.textSecondary)),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+              const SizedBox(height: 16),
+              Container(
+                color: AppColors.surface,
+                child: Column(
+                  children: [
+                    _buildListTile(Icons.straighten, 'My Measurements', () {}),
+                    _buildListTile(Icons.location_on_outlined, 'Delivery Addresses', () {}),
+                    _buildListTile(Icons.payment, 'Payment Methods', () {}),
+                    _buildListTile(Icons.autorenew, 'Subscription', () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const SubscriptionScreen()));
+                    }),
+                    _buildListTile(Icons.card_giftcard, 'Refer & Earn', () {}),
+                    _buildListTile(Icons.help_outline, 'Help & Support', () {}),
+                    _buildListTile(Icons.settings_outlined, 'Settings', () {}),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+              Container(
+                color: AppColors.surface,
+                child: ListTile(
+                  leading: const Icon(Icons.logout, color: AppColors.error),
+                  title: const Text('Log Out', style: TextStyle(color: AppColors.error, fontWeight: FontWeight.bold)),
+                  onTap: () {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => const LoginScreen()),
+                      (route) => false,
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 48),
                 ],
               ),
-            ),
-            const SizedBox(height: 24),
-            Container(
-              color: AppColors.surface,
-              child: ListTile(
-                leading: const Icon(Icons.logout, color: AppColors.error),
-                title: const Text('Log Out', style: TextStyle(color: AppColors.error, fontWeight: FontWeight.bold)),
-                onTap: () {
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => const LoginScreen()),
-                    (route) => false,
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 48),
-              ],
             ),
           );
         },

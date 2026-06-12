@@ -16,28 +16,35 @@ final dashboardProvider = FutureProvider.autoDispose<DashboardData>((ref) async 
     return DashboardData();
   }
 
+  Map<String, dynamic>? profileRes;
+  List<dynamic> ordersRes = [];
+
   try {
     // 1. Fetch Profile
-    final profileRes = await supabase
+    profileRes = await supabase
         .from('customer_profiles')
         .select()
         .eq('user_id', userId)
         .maybeSingle();
+  } catch (e) {
+    print('Error fetching profile: $e');
+  }
 
+  try {
     // 2. Fetch Active Box (Orders)
-    final ordersRes = await supabase
+    // Removed invalid shirt_inventory relationship for now since order_items table doesn't exist
+    final response = await supabase
         .from('orders')
-        .select('*, shirt_inventory(*, shirts(*))')
+        .select()
         .eq('user_id', userId)
         .inFilter('status', ['PENDING', 'CONFIRMED', 'OUT_FOR_DELIVERY', 'DELIVERED']);
-
-    return DashboardData(
-      profile: profileRes,
-      activeOrders: ordersRes as List<dynamic>,
-    );
+    ordersRes = response as List<dynamic>;
   } catch (e) {
-    print('Error fetching dashboard data: $e');
-    // Return empty state if it fails
-    return DashboardData();
+    print('Error fetching active orders: $e');
   }
+
+  return DashboardData(
+    profile: profileRes,
+    activeOrders: ordersRes,
+  );
 });

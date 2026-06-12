@@ -108,101 +108,107 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
           
           final orders = data.activeOrders;
 
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Hey $firstName 👋', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                const Text('Your next box arrives in', style: TextStyle(fontSize: 16, color: AppColors.textSecondary)),
-                const SizedBox(height: 24),
-                Row(
-                  children: [
-                    _buildTimeBox(_days, 'DAYS'),
-                    const Text(' : ', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-                    _buildTimeBox(_hours, 'HRS'),
-                    const Text(' : ', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-                    _buildTimeBox(_minutes, 'MIN'),
-                  ],
-                ),
-                const SizedBox(height: 32),
-                const Text('Current Plan', style: TextStyle(fontSize: 14, color: AppColors.textSecondary)),
-                const SizedBox(height: 8),
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: AppColors.divider),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          return RefreshIndicator(
+            onRefresh: () async {
+              return ref.refresh(dashboardProvider.future);
+            },
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Hey $firstName 👋', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  const Text('Your next box arrives in', style: TextStyle(fontSize: 16, color: AppColors.textSecondary)),
+                  const SizedBox(height: 24),
+                  Row(
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(planName, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                          Text('₹$planPrice /month', style: const TextStyle(fontSize: 14, color: AppColors.textSecondary)),
-                          const SizedBox(height: 4),
-                          Text(planDetails, style: const TextStyle(fontSize: 14, color: AppColors.textSecondary)),
-                        ],
-                      ),
-                      TextButton(
-                        onPressed: () {},
-                        child: const Text('Manage Plan >', style: TextStyle(color: AppColors.primary)),
-                      ),
+                      _buildTimeBox(_days, 'DAYS'),
+                      const Text(' : ', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+                      _buildTimeBox(_hours, 'HRS'),
+                      const Text(' : ', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+                      _buildTimeBox(_minutes, 'MIN'),
                     ],
                   ),
-                ),
-                const SizedBox(height: 32),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text('This Week\'s Box', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                    Text(_getCurrentWeekDates(), style: const TextStyle(fontSize: 14, color: AppColors.textSecondary)),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                
-                // Dynamic shirts row
-                if (orders.isEmpty)
+                  const SizedBox(height: 32),
+                  const Text('Current Plan', style: TextStyle(fontSize: 14, color: AppColors.textSecondary)),
+                  const SizedBox(height: 8),
                   Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(24),
+                    padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
+                      border: Border.all(color: AppColors.divider),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Text(
-                      'No active shirts in your box right now. Tap "View Box" to add some!',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: AppColors.textSecondary),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(planName, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                            Text('₹$planPrice /month', style: const TextStyle(fontSize: 14, color: AppColors.textSecondary)),
+                            const SizedBox(height: 4),
+                            Text(planDetails, style: const TextStyle(fontSize: 14, color: AppColors.textSecondary)),
+                          ],
+                        ),
+                        TextButton(
+                          onPressed: () {},
+                          child: const Text('Manage Plan >', style: TextStyle(color: AppColors.primary)),
+                        ),
+                      ],
                     ),
-                  )
-                else
+                  ),
+                  const SizedBox(height: 32),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('This Week\'s Box', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      Text(_getCurrentWeekDates(), style: const TextStyle(fontSize: 14, color: AppColors.textSecondary)),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  
+                  // Dynamic shirts row
+                  if (orders.isEmpty)
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Text(
+                        'No active shirts in your box right now. Tap "View Box" to add some!',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: AppColors.textSecondary),
+                      ),
+                    )
+                  else
+                    SizedBox(
+                      height: 100,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: orders.length,
+                        itemBuilder: (context, index) {
+                          final order = orders[index];
+                          final inventory = order['shirt_inventory'];
+                          final colorString = inventory != null ? inventory['color'] as String? : null;
+                          return _buildShirtThumbnail(_getColorFromString(colorString));
+                        },
+                      ),
+                    ),
+                  
+                  const SizedBox(height: 24),
                   SizedBox(
-                    height: 100,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: orders.length,
-                      itemBuilder: (context, index) {
-                        final order = orders[index];
-                        final inventory = order['shirt_inventory'];
-                        final colorString = inventory != null ? inventory['color'] as String? : null;
-                        return _buildShirtThumbnail(_getColorFromString(colorString));
-                      },
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      child: const Text('View Box'),
                     ),
                   ),
-                
-                const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    child: const Text('View Box'),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         },
