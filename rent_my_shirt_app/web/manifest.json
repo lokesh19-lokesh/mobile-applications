@@ -1,11 +1,11 @@
 {
-    "name": "rent_my_shirt_app",
-    "short_name": "rent_my_shirt_app",
+    "name": "Wear Box",
+    "short_name": "Wear Box",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#ffffff",
-    "description": "A new Flutter project.",
+    "description": "Premium Workwear. On Subscription.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
