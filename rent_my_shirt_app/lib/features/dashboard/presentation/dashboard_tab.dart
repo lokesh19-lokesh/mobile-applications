@@ -130,8 +130,8 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                               colors: [
-                                Colors.black.withOpacity(0.0),
-                                Colors.black.withOpacity(0.7),
+                                Colors.black.withValues(alpha: 0.2),
+                                Colors.black.withValues(alpha: 0.7),
                               ],
                             ),
                           ),
@@ -228,7 +228,7 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
                             border: Border.all(color: AppColors.primary, width: 2),
                             borderRadius: BorderRadius.circular(16),
                             boxShadow: [
-                              BoxShadow(color: AppColors.primary.withOpacity(0.1), blurRadius: 20, offset: const Offset(0, 8)),
+                              BoxShadow(color: AppColors.primary.withValues(alpha: 0.1), blurRadius: 20, offset: const Offset(0, 8)),
                             ],
                           ),
                           child: Column(
@@ -364,7 +364,7 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.15),
+            color: Colors.grey.withValues(alpha: 0.15),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -389,7 +389,7 @@ class _DashboardTabState extends ConsumerState<DashboardTab> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),

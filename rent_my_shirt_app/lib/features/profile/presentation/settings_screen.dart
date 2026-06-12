@@ -11,7 +11,7 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   bool _pushNotifications = true;
   bool _emailUpdates = false;
-  bool _darkMode = false;
+  final bool _darkMode = false;
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +44,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     title: const Text('Push Notifications', style: TextStyle(fontWeight: FontWeight.w600)),
                     subtitle: const Text('Delivery updates and reminders', style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
                     value: _pushNotifications,
-                    activeColor: AppColors.primary,
+                    activeThumbColor: AppColors.primary,
                     onChanged: (val) => setState(() => _pushNotifications = val),
                   ),
                   const Divider(height: 1, indent: 16, endIndent: 16, color: AppColors.divider),
@@ -52,7 +52,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     title: const Text('Email Updates', style: TextStyle(fontWeight: FontWeight.w600)),
                     subtitle: const Text('Promotions and new collections', style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
                     value: _emailUpdates,
-                    activeColor: AppColors.primary,
+                    activeThumbColor: AppColors.primary,
                     onChanged: (val) => setState(() => _emailUpdates = val),
                   ),
                   const Divider(height: 1, indent: 16, endIndent: 16, color: AppColors.divider),
@@ -60,7 +60,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     title: const Text('Dark Mode', style: TextStyle(fontWeight: FontWeight.w600)),
                     subtitle: const Text('Coming soon', style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
                     value: _darkMode,
-                    activeColor: AppColors.primary,
+                    activeThumbColor: AppColors.primary,
                     onChanged: (val) {
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Dark Mode coming in next update!')));
                     },

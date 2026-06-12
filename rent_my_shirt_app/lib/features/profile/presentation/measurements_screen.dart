@@ -166,7 +166,7 @@ class _MeasurementsScreenState extends State<MeasurementsScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
-            Text('${value.toStringAsFixed(1)}\"', style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
+            Text('${value.toStringAsFixed(1)}"', style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
           ],
         ),
         Slider(

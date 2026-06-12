@@ -24,7 +24,7 @@ class AiStylistTab extends StatelessWidget {
             _buildLookCard('Tuesday', 'Blue Stripe Shirt', 'White Tee', Colors.lightBlue.shade100),
             _buildLookCard('Wednesday', 'Pink Stripe Shirt', 'White Tee', Colors.pink.shade100),
             _buildLookCard('Thursday', 'Grey Textured Shirt', 'Black Tee', Colors.grey.shade300),
-            _buildLookCard('Friday', 'Navy Check Shirt', 'White Tee', AppColors.primary.withOpacity(0.2)),
+            _buildLookCard('Friday', 'Navy Check Shirt', 'White Tee', AppColors.primary.withValues(alpha: 0.2)),
             const SizedBox(height: 32),
             SizedBox(
               width: double.infinity,

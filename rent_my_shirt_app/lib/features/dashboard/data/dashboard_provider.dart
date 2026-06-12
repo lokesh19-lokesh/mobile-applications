@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter/foundation.dart';
 
 class DashboardData {
   final Map<String, dynamic>? profile;
@@ -27,7 +28,7 @@ final dashboardProvider = FutureProvider.autoDispose<DashboardData>((ref) async 
         .eq('user_id', userId)
         .maybeSingle();
   } catch (e) {
-    print('Error fetching profile: $e');
+    debugPrint('Error fetching profile: $e');
   }
 
   try {
@@ -40,7 +41,7 @@ final dashboardProvider = FutureProvider.autoDispose<DashboardData>((ref) async 
         .inFilter('status', ['PENDING', 'CONFIRMED', 'OUT_FOR_DELIVERY', 'DELIVERED']);
     ordersRes = response as List<dynamic>;
   } catch (e) {
-    print('Error fetching active orders: $e');
+    debugPrint('Error fetching active orders: $e');
   }
 
   return DashboardData(

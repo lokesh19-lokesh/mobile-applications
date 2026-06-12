@@ -91,7 +91,7 @@ class _AddressesScreenState extends State<AddressesScreen> {
     return ListView.separated(
       padding: const EdgeInsets.all(24),
       itemCount: _addresses.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 16),
+      separatorBuilder: (context, index) => const SizedBox(height: 16),
       itemBuilder: (context, index) {
         final address = _addresses[index];
         final isDefault = address['is_default'] == true;
@@ -104,7 +104,7 @@ class _AddressesScreenState extends State<AddressesScreen> {
             border: Border.all(color: isDefault ? AppColors.primary : AppColors.divider),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.05),
+                color: Colors.grey.withValues(alpha: 0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -234,7 +234,7 @@ class _AddAddressModalState extends State<_AddAddressModal> {
             title: const Text('Set as Default Address'),
             value: _isDefault,
             onChanged: (val) => setState(() => _isDefault = val),
-            activeColor: AppColors.primary,
+            activeThumbColor: AppColors.primary,
             contentPadding: EdgeInsets.zero,
           ),
           const SizedBox(height: 24),

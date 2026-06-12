@@ -35,6 +35,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         });
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to pick image: $e')),
       );
