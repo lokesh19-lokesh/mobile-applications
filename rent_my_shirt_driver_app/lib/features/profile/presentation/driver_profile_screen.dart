@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../auth/presentation/login_screen.dart';
+import 'delivery_history_screen.dart';
 
 class DriverProfileScreen extends StatelessWidget {
   const DriverProfileScreen({super.key});
@@ -87,9 +88,14 @@ class DriverProfileScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 32),
-            _buildListTile(Icons.history, 'Delivery History'),
-            _buildListTile(Icons.support_agent, 'Help & Support'),
-            _buildListTile(Icons.settings, 'Settings'),
+            _buildListTile(context, Icons.history, 'Delivery History', () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const DeliveryHistoryScreen()),
+              );
+            }),
+            _buildListTile(context, Icons.support_agent, 'Help & Support', () {}),
+            _buildListTile(context, Icons.settings, 'Settings', () {}),
             const SizedBox(height: 32),
             ListTile(
               leading: const Icon(Icons.logout, color: AppColors.error),
@@ -108,12 +114,12 @@ class DriverProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildListTile(IconData icon, String title) {
+  Widget _buildListTile(BuildContext context, IconData icon, String title, VoidCallback onTap) {
     return ListTile(
       leading: Icon(icon, color: AppColors.textPrimary),
       title: Text(title, style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
       trailing: const Icon(Icons.chevron_right, color: AppColors.textSecondary),
-      onTap: () {},
+      onTap: onTap,
     );
   }
 }

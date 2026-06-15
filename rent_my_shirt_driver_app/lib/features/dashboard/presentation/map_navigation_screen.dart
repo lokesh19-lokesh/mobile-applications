@@ -54,7 +54,7 @@ class MapNavigationScreen extends StatelessWidget {
                   child: Text(
                     'Google Maps Integration Pending Backend',
                     style: GoogleFonts.inter(
-                      color: Colors.white24,
+                      color: AppColors.textSecondary,
                       fontSize: 16,
                     ),
                   ),
@@ -70,7 +70,7 @@ class MapNavigationScreen extends StatelessWidget {
               child: CircleAvatar(
                 backgroundColor: AppColors.surface,
                 child: IconButton(
-                  icon: const Icon(Icons.arrow_back, color: Colors.white),
+                  icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
                   onPressed: () => Navigator.pop(context),
                 ),
               ),
@@ -132,8 +132,8 @@ class MapNavigationScreen extends StatelessWidget {
                   Row(
                     children: [
                       const CircleAvatar(
-                        backgroundColor: Colors.white12,
-                        child: Icon(Icons.person, color: Colors.white),
+                        backgroundColor: AppColors.divider,
+                        child: Icon(Icons.person, color: AppColors.textPrimary),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
@@ -149,7 +149,7 @@ class MapNavigationScreen extends StatelessWidget {
                         onPressed: () {},
                         icon: const Icon(Icons.call, color: AppColors.success),
                         style: IconButton.styleFrom(
-                          backgroundColor: Colors.white12,
+                          backgroundColor: AppColors.divider,
                         ),
                       ),
                     ],
@@ -159,12 +159,29 @@ class MapNavigationScreen extends StatelessWidget {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
-                        // Mark as arrived/picked up
-                        Navigator.pop(context);
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            backgroundColor: AppColors.surface,
+                            title: Text('Confirm ${type == 'PICKUP' ? 'Pickup' : 'Delivery'}'),
+                            content: Text('Are you sure you want to mark this task as completed?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: Text('Cancel', style: GoogleFonts.inter(color: AppColors.textSecondary)),
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.pop(context); // Close dialog
+                                  Navigator.pop(context); // Pop from map navigation back to dashboard
+                                },
+                                style: ElevatedButton.styleFrom(backgroundColor: AppColors.success),
+                                child: const Text('Confirm', style: TextStyle(color: Colors.white)),
+                              ),
+                            ],
+                          ),
+                        );
                       },
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                      ),
                       child: Text(type == 'PICKUP' ? 'Confirm Pickup' : 'Confirm Delivery'),
                     ),
                   ),

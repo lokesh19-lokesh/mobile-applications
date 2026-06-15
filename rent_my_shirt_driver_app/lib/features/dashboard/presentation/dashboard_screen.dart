@@ -4,6 +4,7 @@ import '../../../core/theme/app_colors.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../profile/presentation/driver_profile_screen.dart';
 import 'map_navigation_screen.dart';
+import 'task_details_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -53,6 +54,7 @@ class OrdersListScreen extends StatefulWidget {
 class _OrdersListScreenState extends State<OrdersListScreen> {
   List<dynamic> _orders = [];
   bool _isLoading = true;
+  bool _isOnline = true;
 
   @override
   void initState() {
@@ -90,12 +92,32 @@ class _OrdersListScreenState extends State<OrdersListScreen> {
         automaticallyImplyLeading: false,
         actions: [
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Row(
               children: [
-                const Icon(Icons.circle, size: 12, color: AppColors.success),
+                Icon(
+                  Icons.circle,
+                  size: 12,
+                  color: _isOnline ? AppColors.success : Colors.grey,
+                ),
                 const SizedBox(width: 8),
-                Text('Online', style: GoogleFonts.inter(fontWeight: FontWeight.bold)),
+                Text(
+                  _isOnline ? 'Online' : 'Offline',
+                  style: GoogleFonts.inter(
+                    fontWeight: FontWeight.bold,
+                    color: _isOnline ? AppColors.success : Colors.grey,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Switch(
+                  value: _isOnline,
+                  activeColor: AppColors.success,
+                  onChanged: (value) {
+                    setState(() {
+                      _isOnline = value;
+                    });
+                  },
+                ),
               ],
             ),
           )
@@ -104,7 +126,7 @@ class _OrdersListScreenState extends State<OrdersListScreen> {
       body: _isLoading 
         ? const Center(child: CircularProgressIndicator(color: AppColors.accent))
         : _orders.isEmpty 
-          ? Center(child: Text('No active tasks', style: GoogleFonts.inter(color: Colors.white70)))
+          ? Center(child: Text('No active tasks', style: GoogleFonts.inter(color: AppColors.textSecondary)))
           : ListView.builder(
               padding: const EdgeInsets.all(16),
               itemCount: _orders.length,
@@ -120,13 +142,14 @@ class _OrdersListScreenState extends State<OrdersListScreen> {
                   address: isPickup ? (order['pickup_address'] ?? 'Warehouse') : (order['delivery_address'] ?? 'Customer Location'),
                   distance: 'Near you',
                   time: shirtName,
+                  orderId: order['id'].toString(),
                 );
               },
             ),
     );
   }
 
-  Widget _buildTaskCard({required BuildContext context, required String type, required String address, required String distance, required String time}) {
+  Widget _buildTaskCard({required BuildContext context, required String type, required String address, required String distance, required String time, required String orderId}) {
     final isPickup = type == 'PICKUP';
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -134,7 +157,7 @@ class _OrdersListScreenState extends State<OrdersListScreen> {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white12),
+        border: Border.all(color: AppColors.divider),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -174,7 +197,7 @@ class _OrdersListScreenState extends State<OrdersListScreen> {
             ],
           ),
           const SizedBox(height: 16),
-          const Divider(color: Colors.white12),
+          const Divider(color: AppColors.divider),
           const SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -191,9 +214,11 @@ class _OrdersListScreenState extends State<OrdersListScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => MapNavigationScreen(
+                      builder: (context) => TaskDetailsScreen(
                         address: address,
                         type: type,
+                        shirtName: time,
+                        orderId: orderId,
                       ),
                     ),
                   );
@@ -201,7 +226,7 @@ class _OrdersListScreenState extends State<OrdersListScreen> {
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 ),
-                child: const Text('Accept'),
+                child: const Text('View Task'),
               ),
             ],
           ),
