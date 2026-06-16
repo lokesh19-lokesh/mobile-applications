@@ -19,22 +19,22 @@ const PlansPage = () => {
       <div className="container section-space features-comparison">
         <h2 className="section-title" style={{ textAlign: 'center' }}>Every Plan Includes</h2>
         <div className="features-grid">
-          <div className="feature-item">
+          <div className="plan-feature-item">
             <div className="feature-icon">✔️</div>
             <h4>Free Weekly Delivery</h4>
             <p>We pick up and drop off at your door.</p>
           </div>
-          <div className="feature-item">
+          <div className="plan-feature-item">
             <div className="feature-icon">✔️</div>
             <h4>Premium Dry Cleaning</h4>
             <p>Professional eco-friendly cleaning.</p>
           </div>
-          <div className="feature-item">
+          <div className="plan-feature-item">
             <div className="feature-icon">✔️</div>
             <h4>Crisp Ironing</h4>
             <p>Ready to wear out of the box.</p>
           </div>
-          <div className="feature-item">
+          <div className="plan-feature-item">
             <div className="feature-icon">✔️</div>
             <h4>Damage Protection</h4>
             <p>Accidental spills? Covered.</p>

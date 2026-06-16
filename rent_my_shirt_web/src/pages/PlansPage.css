@@ -13,7 +13,7 @@
   gap: 30px;
   margin-top: 40px;
 }
-.feature-item {
+.plan-feature-item {
   text-align: center;
   padding: 30px;
   background-color: var(--light-grey);
@@ -24,11 +24,11 @@
   margin-bottom: 15px;
   color: var(--primary-red);
 }
-.feature-item h4 {
+.plan-feature-item h4 {
   font-size: 1.25rem;
   margin-bottom: 10px;
 }
-.feature-item p {
+.plan-feature-item p {
   color: var(--text-grey);
   font-size: 0.9rem;
 }
