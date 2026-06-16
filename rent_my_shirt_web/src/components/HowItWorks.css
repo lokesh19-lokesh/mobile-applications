@@ -73,8 +73,26 @@
   object-position: bottom right;
 }
 
+@media (max-width: 1024px) {
+  .step-card {
+    padding: 24px;
+  }
+  .step-title {
+    font-size: 18px;
+  }
+  .step-desc {
+    font-size: 14px;
+  }
+  .step-content {
+    width: 65%;
+  }
+}
+
 @media (max-width: 768px) {
   .steps-container {
     flex-direction: column;
+  }
+  .step-content {
+    width: 60%;
   }
 }
