@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/presentation/splash_screen.dart';
-import 'features/web_landing/presentation/web_landing_page.dart';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -29,7 +27,7 @@ class RentMyShirtApp extends StatelessWidget {
       title: 'Wearbox',
       theme: AppTheme.lightTheme,
       debugShowCheckedModeBanner: false,
-      home: kIsWeb ? const WebLandingPage() : const SplashScreen(),
+      home: const SplashScreen(),
     );
   }
 }

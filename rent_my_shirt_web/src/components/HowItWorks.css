@@ -1,0 +1,68 @@
+.how-it-works {
+  /* section space handles margins */
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 32px;
+}
+
+.section-title {
+  font-size: 32px;
+}
+
+.view-all {
+  color: var(--primary-red);
+  font-weight: 700;
+}
+
+.steps-container {
+  display: flex;
+  gap: 24px;
+}
+
+.step-card {
+  flex: 1;
+  background-color: var(--bg-light-grey);
+  border-radius: 16px;
+  padding: 32px;
+  height: 250px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.step-num {
+  color: var(--primary-red);
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.step-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.step-desc {
+  color: var(--text-grey);
+}
+
+.step-icon {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  font-size: 64px;
+  opacity: 0.1;
+  filter: grayscale(100%);
+}
+
+@media (max-width: 768px) {
+  .steps-container {
+    flex-direction: column;
+  }
+}
