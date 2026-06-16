@@ -49,8 +49,8 @@ const Footer = () => {
       <div className="container footer-bottom">
         <p>© 2026 Wearbox. All rights reserved. Powered by <a href="https://thepatternscompany.com/" target="_blank" rel="noopener noreferrer">Patterns Infotech Private Limited</a></p>
         <div className="footer-legal">
-          <a href="#privacy">Privacy Policy</a>
-          <a href="#terms">Terms & Conditions</a>
+          <Link to="/privacy-policy">Privacy Policy</Link>
+          <Link to="/terms-conditions">Terms & Conditions</Link>
         </div>
       </div>
     </footer>

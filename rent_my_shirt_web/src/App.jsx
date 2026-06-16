@@ -9,10 +9,14 @@ import PlansPage from './pages/PlansPage';
 import ReviewsPage from './pages/ReviewsPage';
 import AboutPage from './pages/AboutPage';
 import FAQPage from './pages/FAQPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TermsConditionsPage from './pages/TermsConditionsPage';
+import ScrollToTop from './components/ScrollToTop';
 
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <div className="app">
         <Navbar />
         <Routes>
@@ -23,6 +27,8 @@ function App() {
           <Route path="/reviews" element={<ReviewsPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/faq" element={<FAQPage />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+          <Route path="/terms-conditions" element={<TermsConditionsPage />} />
         </Routes>
         <Footer />
       </div>
