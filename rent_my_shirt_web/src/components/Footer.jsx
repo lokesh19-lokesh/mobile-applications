@@ -1,4 +1,5 @@
 import React from 'react';
+import { FaFacebook, FaInstagram, FaTwitter, FaYoutube } from 'react-icons/fa';
 import './Footer.css';
 
 const Footer = () => {
@@ -11,10 +12,10 @@ const Footer = () => {
             Find the perfect premium workwear and shirts on subscription for professionals in India.
           </p>
           <div className="footer-socials">
-            <span>fb</span>
-            <span>ig</span>
-            <span>tw</span>
-            <span>yt</span>
+            <a href="#facebook" aria-label="Facebook"><FaFacebook size={24} /></a>
+            <a href="#instagram" aria-label="Instagram"><FaInstagram size={24} /></a>
+            <a href="#twitter" aria-label="Twitter"><FaTwitter size={24} /></a>
+            <a href="#youtube" aria-label="YouTube"><FaYoutube size={24} /></a>
           </div>
         </div>
         

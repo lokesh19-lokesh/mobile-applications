@@ -29,6 +29,15 @@
   color: var(--text-grey);
 }
 
+.footer-socials a {
+  color: var(--text-grey);
+  transition: color 0.2s;
+}
+
+.footer-socials a:hover {
+  color: var(--primary-red);
+}
+
 .footer-col-1 {
   flex: 2;
 }

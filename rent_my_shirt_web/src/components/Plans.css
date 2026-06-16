@@ -71,14 +71,15 @@
 .btn-outline-red {
   background: white;
   color: var(--primary-red);
-  border: 1px solid var(--border-light);
+  border: none;
   text-align: left;
   display: flex;
   justify-content: space-between;
+  padding: 16px 8px;
 }
 
 .btn-outline-red:hover {
-  border-color: var(--primary-red);
+  background: var(--bg-light-grey);
 }
 
 @media (max-width: 768px) {
