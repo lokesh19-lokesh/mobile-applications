@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import './Navbar.css';
 
 const Navbar = () => {
+  const navigate = useNavigate();
   return (
     <nav className="navbar">
       <div className="container navbar-container">
@@ -19,7 +20,7 @@ const Navbar = () => {
         </div>
         
         <div className="nav-actions">
-          <button className="btn btn-primary btn-sm" onClick={() => window.location.href='/plans'}>Get Started</button>
+          <button className="btn btn-primary btn-sm" onClick={() => navigate('/download-app')}>Get Started</button>
         </div>
       </div>
     </nav>

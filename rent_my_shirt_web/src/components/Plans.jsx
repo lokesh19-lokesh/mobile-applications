@@ -28,7 +28,7 @@ const Plans = () => {
             <div className="plan-price">₹{plan.price}<span className="plan-month">/month</span></div>
             <div className="plan-feature">{plan.feature}</div>
             <div className="plan-desc">{plan.desc}</div>
-            <button className={`btn plan-btn ${plan.popular ? 'btn-primary' : 'btn-outline-red'}`} onClick={() => navigate('/plans')}>
+            <button className={`btn plan-btn ${plan.popular ? 'btn-primary' : 'btn-outline-red'}`} onClick={() => navigate('/download-app')}>
               Select Plan {plan.popular ? '' : '>'}
             </button>
           </div>
