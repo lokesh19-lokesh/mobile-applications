@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../home/presentation/main_wrapper_screen.dart';
+import '../../../core/utils/responsive_layout.dart';
+import '../../web_landing/presentation/web_landing_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -20,7 +22,12 @@ class _SplashScreenState extends State<SplashScreen> {
       if (mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const MainWrapperScreen()),
+          MaterialPageRoute(
+            builder: (context) => const ResponsiveLayout(
+              mobileScaffold: MainWrapperScreen(),
+              webScaffold: WebLandingPage(),
+            ),
+          ),
         );
       }
     });
