@@ -1,6 +1,6 @@
 .reviews-section {
   background-color: var(--primary-red);
-  border-radius: 24px;
+  border-radius: 24px 24px 0 0;
   padding: 40px;
   color: white;
 }

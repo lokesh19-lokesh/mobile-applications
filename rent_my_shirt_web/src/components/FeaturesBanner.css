@@ -22,13 +22,14 @@
   font-size: 24px;
 }
 
-.feature-title {
+.feature-text h4 {
+  font-family: var(--font-body);
   font-weight: 700;
   font-size: 16px;
   margin-bottom: 4px;
 }
 
-.feature-desc {
+.feature-text p {
   color: var(--text-grey);
   font-size: 14px;
 }

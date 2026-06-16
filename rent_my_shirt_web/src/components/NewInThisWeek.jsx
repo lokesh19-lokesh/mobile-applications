@@ -12,12 +12,24 @@ const NewInThisWeek = () => {
         <a href="#view-all-collection" className="view-all">View all collection</a>
       </div>
       <div className="collection-grid">
-        <div className="collection-item" style={{ backgroundColor: '#f0f0f0' }}></div>
-        <div className="collection-item" style={{ backgroundColor: '#f8c8dc' }}></div>
-        <div className="collection-item" style={{ backgroundColor: '#bae1ff' }}></div>
-        <div className="collection-item" style={{ backgroundColor: '#c0c0c0' }}></div>
-        <div className="collection-item" style={{ backgroundColor: '#4a4a4a' }}></div>
-        <div className="collection-item" style={{ backgroundColor: '#f0f0f0' }}></div>
+        <div className="collection-item">
+          <img src="/assets/images/shirt_white_tee.png" alt="White Tee" />
+        </div>
+        <div className="collection-item">
+          <img src="/assets/images/shirt_pink.png" alt="Pink Shirt" />
+        </div>
+        <div className="collection-item">
+          <img src="/assets/images/shirt_blue.png" alt="Blue Shirt" />
+        </div>
+        <div className="collection-item">
+          <img src="/assets/images/shirt_grey.png" alt="Grey Shirt" />
+        </div>
+        <div className="collection-item">
+          <img src="/assets/images/shirt_black_collar.png" alt="Black Collar Shirt" />
+        </div>
+        <div className="collection-item">
+          <img src="/assets/images/shirt_white_formal.png" alt="White Formal Shirt" />
+        </div>
       </div>
     </div>
   );
