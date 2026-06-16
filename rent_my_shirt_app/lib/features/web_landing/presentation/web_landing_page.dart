@@ -58,17 +58,10 @@ class WebLandingPage extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text(
-                'WB',
-                style: GoogleFonts.poppins(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w900,
-                  color: Colors.red,
-                ),
-              ),
+              Image.asset('assets/images/logo.png', height: 40),
               const SizedBox(width: 8),
               Text(
-                'wearbox',
+                'Wearbox',
                 style: GoogleFonts.poppins(
                   fontSize: 24,
                   fontWeight: FontWeight.w600,
@@ -614,9 +607,9 @@ class WebLandingPage extends StatelessWidget {
       children: [
         Row(
           children: [
-            Text('WB', style: GoogleFonts.poppins(fontSize: 28, fontWeight: FontWeight.w900, color: Colors.white)),
+            Image.asset('assets/images/logo.png', height: 40),
             const SizedBox(width: 8),
-            Text('wearbox', style: GoogleFonts.poppins(fontSize: 24, fontWeight: FontWeight.w600, color: Colors.white)),
+            Text('Wearbox', style: GoogleFonts.poppins(fontSize: 24, fontWeight: FontWeight.w600, color: Colors.white)),
           ],
         ),
         const SizedBox(height: 24),
