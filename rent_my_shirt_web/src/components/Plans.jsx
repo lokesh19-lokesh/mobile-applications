@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import './Plans.css';
 
 const plans = [
@@ -8,6 +9,7 @@ const plans = [
 ];
 
 const Plans = () => {
+  const navigate = useNavigate();
   return (
     <div className="plans container section-space">
       <div className="section-header">
@@ -15,7 +17,7 @@ const Plans = () => {
           <h2 className="section-title">Choose Your Plan</h2>
           <p className="section-subtitle">Simple plans. Premium experience.</p>
         </div>
-        <a href="#view-all-plans" className="view-all">View all plans</a>
+        <Link to="/plans" className="view-all">View all plans</Link>
       </div>
       
       <div className="plans-container">
@@ -26,7 +28,7 @@ const Plans = () => {
             <div className="plan-price">₹{plan.price}<span className="plan-month">/month</span></div>
             <div className="plan-feature">{plan.feature}</div>
             <div className="plan-desc">{plan.desc}</div>
-            <button className={`btn plan-btn ${plan.popular ? 'btn-primary' : 'btn-outline-red'}`}>
+            <button className={`btn plan-btn ${plan.popular ? 'btn-primary' : 'btn-outline-red'}`} onClick={() => navigate('/plans')}>
               Select Plan {plan.popular ? '' : '>'}
             </button>
           </div>

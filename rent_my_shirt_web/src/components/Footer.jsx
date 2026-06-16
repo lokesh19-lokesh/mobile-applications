@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { FaFacebook, FaInstagram, FaTwitter, FaYoutube } from 'react-icons/fa';
 import './Footer.css';
 
@@ -20,15 +21,15 @@ const Footer = () => {
         </div>
         
         <div className="footer-col-2">
-          <a href="#how-it-works">How It Works</a>
-          <a href="#collections">Collections</a>
-          <a href="#plans">Plans</a>
+          <Link to="/how-it-works">How It Works</Link>
+          <Link to="/collections">Collections</Link>
+          <Link to="/plans">Plans</Link>
         </div>
         
         <div className="footer-col-3">
-          <a href="#about">About Us</a>
-          <a href="#reviews">Reviews</a>
-          <a href="#faq">FAQ & Support</a>
+          <Link to="/about">About Us</Link>
+          <Link to="/reviews">Reviews</Link>
+          <Link to="/faq">FAQ & Support</Link>
         </div>
         
         <div className="footer-col-4">

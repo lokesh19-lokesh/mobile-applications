@@ -1,25 +1,32 @@
 import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import FeaturesBanner from './components/FeaturesBanner';
-import HowItWorks from './components/HowItWorks';
-import Plans from './components/Plans';
-import NewInThisWeek from './components/NewInThisWeek';
-import Reviews from './components/Reviews';
 import Footer from './components/Footer';
+import Home from './pages/Home';
+import HowItWorksPage from './pages/HowItWorksPage';
+import CollectionsPage from './pages/CollectionsPage';
+import PlansPage from './pages/PlansPage';
+import ReviewsPage from './pages/ReviewsPage';
+import AboutPage from './pages/AboutPage';
+import FAQPage from './pages/FAQPage';
 
 function App() {
   return (
-    <div className="app">
-      <Navbar />
-      <Hero />
-      <FeaturesBanner />
-      <HowItWorks />
-      <Plans />
-      <NewInThisWeek />
-      <Reviews />
-      <Footer />
-    </div>
+    <Router>
+      <div className="app">
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/how-it-works" element={<HowItWorksPage />} />
+          <Route path="/collections" element={<CollectionsPage />} />
+          <Route path="/plans" element={<PlansPage />} />
+          <Route path="/reviews" element={<ReviewsPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/faq" element={<FAQPage />} />
+        </Routes>
+        <Footer />
+      </div>
+    </Router>
   );
 }
 

@@ -1,7 +1,9 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Hero.css';
 
 const Hero = () => {
+  const navigate = useNavigate();
   return (
     <div className="hero container section-space">
       <div className="hero-content">
@@ -16,8 +18,8 @@ const Hero = () => {
           Delivered Every Monday.
         </p>
         <div className="hero-buttons">
-          <button className="btn btn-primary">Start Subscription</button>
-          <button className="btn btn-outline">Explore Plans</button>
+          <button className="btn btn-primary" onClick={() => navigate('/plans')}>Start Subscription</button>
+          <button className="btn btn-outline" onClick={() => navigate('/plans')}>Explore Plans</button>
         </div>
       </div>
       <div className="hero-image-container">

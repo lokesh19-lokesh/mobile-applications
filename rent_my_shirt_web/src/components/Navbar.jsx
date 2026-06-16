@@ -1,24 +1,25 @@
 import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import './Navbar.css';
 
 const Navbar = () => {
   return (
     <nav className="navbar">
       <div className="container navbar-container">
-        <div className="logo-container">
+        <Link to="/" className="logo-container">
           <img src="/assets/images/logo.png" alt="Wearbox Logo" className="logo" />
-        </div>
+        </Link>
         
         <div className="nav-links">
-          <a href="#how-it-works" className="nav-link">How It Works</a>
-          <a href="#collections" className="nav-link">Collections</a>
-          <a href="#plans" className="nav-link">Plans</a>
-          <a href="#about" className="nav-link">About Us</a>
-          <a href="#reviews" className="nav-link">Reviews</a>
+          <Link to="/how-it-works" className="nav-link">How It Works</Link>
+          <Link to="/collections" className="nav-link">Collections</Link>
+          <Link to="/plans" className="nav-link">Plans</Link>
+          <Link to="/about" className="nav-link">About Us</Link>
+          <Link to="/reviews" className="nav-link">Reviews</Link>
         </div>
         
         <div className="nav-actions">
-          <button className="btn btn-primary btn-sm">Get Started</button>
+          <button className="btn btn-primary btn-sm" onClick={() => window.location.href='/plans'}>Get Started</button>
         </div>
       </div>
     </nav>
