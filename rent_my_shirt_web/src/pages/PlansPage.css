@@ -1,0 +1,115 @@
+.plans-page {
+  padding-top: 80px;
+}
+.plans-header {
+  padding: 60px 0;
+}
+.features-comparison {
+  margin-top: 40px;
+  background-color: white;
+}
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 30px;
+  margin-top: 40px;
+}
+.feature-item {
+  text-align: center;
+  padding: 30px;
+  background-color: var(--light-grey);
+  border-radius: var(--border-radius);
+}
+.feature-icon {
+  font-size: 2rem;
+  margin-bottom: 15px;
+  color: var(--primary-red);
+}
+.feature-item h4 {
+  font-size: 1.25rem;
+  margin-bottom: 10px;
+}
+.feature-item p {
+  color: var(--text-grey);
+  font-size: 0.9rem;
+}
+.corporate-banner {
+  margin-top: 20px;
+  margin-bottom: 60px;
+}
+.corporate-content {
+  background: linear-gradient(135deg, var(--text-dark), #333);
+  color: white;
+  padding: 60px 40px;
+  border-radius: var(--border-radius-lg);
+}
+.corporate-content h2 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+}
+.corporate-content p {
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto;
+  opacity: 0.9;
+}
+.corporate-content .btn-outline {
+  border-color: white;
+  color: white;
+}
+.corporate-content .btn-outline:hover {
+  background-color: white;
+  color: var(--text-dark);
+}
+
+/* NEW STYLES */
+.guarantee-banner {
+  padding: 60px 0;
+  margin-top: 20px;
+}
+.guarantee-icon {
+  font-size: 3rem;
+  margin-bottom: 20px;
+}
+.guarantee-banner h2 {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+}
+.guarantee-banner p {
+  font-size: 1.1rem;
+  max-width: 700px;
+  margin: 0 auto;
+  color: var(--text-grey);
+  line-height: 1.8;
+}
+
+.pricing-faq-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  margin-top: 40px;
+}
+.pricing-faq-item {
+  background-color: var(--light-grey);
+  padding: 30px;
+  border-radius: var(--border-radius);
+}
+.pricing-faq-item h4 {
+  font-size: 1.25rem;
+  margin-bottom: 10px;
+}
+.pricing-faq-item p {
+  color: var(--text-grey);
+  line-height: 1.6;
+}
+
+@media (max-width: 992px) {
+  .features-grid, .pricing-faq-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 576px) {
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+}

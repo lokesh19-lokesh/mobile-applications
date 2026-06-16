@@ -1,0 +1,123 @@
+.about-page {
+  padding-top: 80px;
+}
+.about-hero {
+  text-align: center;
+}
+.about-title {
+  font-size: 3.5rem;
+  margin-bottom: 20px;
+}
+.about-subtitle {
+  font-size: 1.25rem;
+  color: var(--text-grey);
+  max-width: 600px;
+  margin: 0 auto;
+}
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+.about-text-card {
+  background-color: var(--light-grey);
+  padding: 40px;
+  border-radius: var(--border-radius-lg);
+}
+.about-text-card h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+.about-text-card p {
+  color: var(--text-grey);
+  line-height: 1.6;
+  font-size: 1.1rem;
+}
+.about-values {
+  background-color: #fcfcfc;
+}
+.values-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  margin-top: 50px;
+}
+.value-card {
+  text-align: center;
+  padding: 30px;
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+}
+.value-icon {
+  font-size: 3rem;
+  margin-bottom: 20px;
+}
+.value-card h3 {
+  font-size: 1.25rem;
+  margin-bottom: 15px;
+}
+.value-card p {
+  color: var(--text-grey);
+  line-height: 1.5;
+}
+
+/* NEW STYLES */
+.stats-banner {
+  background-color: var(--text-dark);
+  color: white;
+  padding: 40px 0;
+  margin: 40px 0;
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  text-align: center;
+  gap: 30px;
+}
+.stat-item h3 {
+  font-size: 3rem;
+  margin-bottom: 10px;
+  color: var(--primary-red);
+}
+.stat-item p {
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+.quality-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+.quality-image {
+  background-color: var(--light-grey);
+  border-radius: var(--border-radius-lg);
+  padding: 40px;
+  text-align: center;
+}
+.quality-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--border-radius);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+.quality-text h2 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+}
+.quality-text p {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: var(--text-grey);
+  margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+  .about-grid, .stats-grid, .values-grid, .quality-grid {
+    grid-template-columns: 1fr;
+  }
+}
