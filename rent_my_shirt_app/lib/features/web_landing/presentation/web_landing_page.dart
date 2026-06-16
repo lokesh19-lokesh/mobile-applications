@@ -56,20 +56,7 @@ class WebLandingPage extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            children: [
-              Image.asset('assets/images/logo.png', height: 40),
-              const SizedBox(width: 8),
-              Text(
-                'Wearbox',
-                style: GoogleFonts.poppins(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.red,
-                ),
-              ),
-            ],
-          ),
+          Image.asset('assets/images/logo.png', height: 80),
           if (isDesktop)
             Row(
               children: [
@@ -605,28 +592,22 @@ class WebLandingPage extends StatelessWidget {
     Widget column1 = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Image.asset('assets/images/logo.png', height: 40),
-            const SizedBox(width: 8),
-            Text('Wearbox', style: GoogleFonts.poppins(fontSize: 24, fontWeight: FontWeight.w600, color: Colors.white)),
-          ],
-        ),
+        Image.asset('assets/images/logo.png', height: 80),
         const SizedBox(height: 24),
         const Text(
           'Find the perfect premium workwear and shirts on subscription for professionals in India.',
-          style: TextStyle(color: Colors.white70, fontSize: 14, height: 1.6),
+          style: TextStyle(color: Colors.black87, fontSize: 14, height: 1.6),
         ),
         const SizedBox(height: 24),
         const Row(
           children: [
-            Icon(Icons.facebook, color: Colors.white70, size: 24),
+            Icon(Icons.facebook, color: Colors.black54, size: 24),
             SizedBox(width: 16),
-            Icon(Icons.camera_alt_outlined, color: Colors.white70, size: 24),
+            Icon(Icons.camera_alt_outlined, color: Colors.black54, size: 24),
             SizedBox(width: 16),
-            Icon(Icons.alternate_email, color: Colors.white70, size: 24),
+            Icon(Icons.alternate_email, color: Colors.black54, size: 24),
             SizedBox(width: 16),
-            Icon(Icons.play_circle_outline, color: Colors.white70, size: 24),
+            Icon(Icons.play_circle_outline, color: Colors.black54, size: 24),
           ],
         ),
       ],
@@ -653,7 +634,7 @@ class WebLandingPage extends StatelessWidget {
     Widget column4 = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Contact Us', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+        const Text('Contact Us', style: TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         Container(width: 30, height: 2, color: Colors.red),
         const SizedBox(height: 24),
@@ -667,7 +648,7 @@ class WebLandingPage extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      color: const Color(0xFF0A0E17),
+      color: Colors.white,
       padding: EdgeInsets.symmetric(horizontal: isDesktop ? 40 : 20, vertical: 80),
       child: Center(
         child: ConstrainedBox(
@@ -700,18 +681,18 @@ class WebLandingPage extends StatelessWidget {
                   ],
                 ),
               const SizedBox(height: 60),
-              Divider(color: Colors.white.withValues(alpha: 0.1), thickness: 1),
+              Divider(color: Colors.grey.shade200, thickness: 1),
               const SizedBox(height: 24),
               if (isDesktop)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('© 2026 wearbox. All rights reserved. Powered by Wearbox Tech.', style: TextStyle(color: Colors.white54, fontSize: 14)),
+                    const Text('© 2026 wearbox. All rights reserved. Powered by Wearbox Tech.', style: TextStyle(color: Colors.black54, fontSize: 14)),
                     Row(
                       children: [
-                        TextButton(onPressed: () {}, child: const Text('Privacy Policy', style: TextStyle(color: Colors.white54))),
+                        TextButton(onPressed: () {}, child: const Text('Privacy Policy', style: TextStyle(color: Colors.black54))),
                         const SizedBox(width: 16),
-                        TextButton(onPressed: () {}, child: const Text('Terms & Conditions', style: TextStyle(color: Colors.white54))),
+                        TextButton(onPressed: () {}, child: const Text('Terms & Conditions', style: TextStyle(color: Colors.black54))),
                       ],
                     ),
                   ],
@@ -723,15 +704,15 @@ class WebLandingPage extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        TextButton(onPressed: () {}, child: const Text('Privacy Policy', style: TextStyle(color: Colors.white54))),
+                        TextButton(onPressed: () {}, child: const Text('Privacy Policy', style: TextStyle(color: Colors.black54))),
                         const SizedBox(width: 16),
-                        TextButton(onPressed: () {}, child: const Text('Terms & Conditions', style: TextStyle(color: Colors.white54))),
+                        TextButton(onPressed: () {}, child: const Text('Terms & Conditions', style: TextStyle(color: Colors.black54))),
                       ],
                     ),
                     const SizedBox(height: 16),
-                    const Text('© 2026 wearbox. All rights reserved.', style: TextStyle(color: Colors.white54, fontSize: 14), textAlign: TextAlign.center),
+                    const Text('© 2026 wearbox. All rights reserved.', style: TextStyle(color: Colors.black54, fontSize: 14), textAlign: TextAlign.center),
                     const SizedBox(height: 8),
-                    const Text('Powered by Wearbox Tech.', style: TextStyle(color: Colors.white54, fontSize: 14), textAlign: TextAlign.center),
+                    const Text('Powered by Wearbox Tech.', style: TextStyle(color: Colors.black54, fontSize: 14), textAlign: TextAlign.center),
                   ],
                 ),
             ],
@@ -753,7 +734,7 @@ class WebLandingPage extends StatelessWidget {
         ),
         child: Text(
           title,
-          style: const TextStyle(color: Colors.white70, fontSize: 14),
+          style: const TextStyle(color: Colors.black87, fontSize: 14),
         ),
       ),
     );
@@ -763,12 +744,12 @@ class WebLandingPage extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, color: Colors.white70, size: 18),
+        Icon(icon, color: Colors.black54, size: 18),
         const SizedBox(width: 12),
         Expanded(
           child: Text(
             text,
-            style: const TextStyle(color: Colors.white70, fontSize: 14, height: 1.4),
+            style: const TextStyle(color: Colors.black87, fontSize: 14, height: 1.4),
           ),
         ),
       ],
