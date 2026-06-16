@@ -46,7 +46,7 @@ const Footer = () => {
       </div>
       
       <div className="container footer-bottom">
-        <p>© 2026 Wearbox. All rights reserved. Powered by Wearbox Tech.</p>
+        <p>© 2026 Wearbox. All rights reserved. Powered by <a href="https://thepatternscompany.com/" target="_blank" rel="noopener noreferrer">Patterns Infotech Private Limited</a></p>
         <div className="footer-legal">
           <a href="#privacy">Privacy Policy</a>
           <a href="#terms">Terms & Conditions</a>
