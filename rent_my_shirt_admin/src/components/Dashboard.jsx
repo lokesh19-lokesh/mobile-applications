@@ -3,7 +3,7 @@ import { supabase } from '../supabaseClient';
 
 function Dashboard() {
   const [orders, setOrders] = useState([]);
-  const [stats, setStats] = useState({ users: 0, rentals: 0, deposits: 0 });
+  const [stats, setStats] = useState({ users: 0, rentals: 0, deposits: 0, revenue: 0 });
 
   useEffect(() => {
     fetchData();
@@ -15,11 +15,28 @@ function Dashboard() {
       const { count: usersCount } = await supabase.from('customer_profiles').select('*', { count: 'exact', head: true });
       const { count: activeRentals } = await supabase.from('orders').select('*', { count: 'exact', head: true }).in('status', ['OUT_FOR_DELIVERY', 'DELIVERED', 'RETURN_REQUESTED']);
       
+      // Calculate Monthly Revenue dynamically
+      const startOfMonth = new Date();
+      startOfMonth.setDate(1);
+      startOfMonth.setHours(0, 0, 0, 0);
+      
+      const { data: revenueData } = await supabase
+        .from('orders')
+        .select('total_price')
+        .gte('created_at', startOfMonth.toISOString())
+        .in('status', ['COMPLETED', 'DELIVERED', 'RETURNED']);
+        
+      let totalRevenue = 0;
+      if (revenueData && revenueData.length > 0) {
+        totalRevenue = revenueData.reduce((sum, order) => sum + (Number(order.total_price) || 0), 0);
+      }
+      
       setOrders(ordersData || []);
       setStats({
         users: usersCount || 0,
         rentals: activeRentals || 0,
         deposits: (usersCount || 0) * 5000,
+        revenue: totalRevenue,
       });
     } catch (e) {
       console.error(e);
@@ -44,7 +61,7 @@ function Dashboard() {
         </div>
         <div className="card">
           <div className="card-title">Monthly Revenue</div>
-          <div className="card-value">₹--</div>
+          <div className="card-value">₹{stats.revenue.toLocaleString('en-IN')}</div>
         </div>
       </div>
       
@@ -73,7 +90,7 @@ function Dashboard() {
               </tr>
             ))}
             {orders.length === 0 && (
-              <tr><td colSpan="4">No recent orders</td></tr>
+              <tr><td colSpan="4">No recent orders found. The list will update automatically when a customer places an order.</td></tr>
             )}
           </tbody>
         </table>
