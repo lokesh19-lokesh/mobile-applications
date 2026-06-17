@@ -63,7 +63,7 @@ const DownloadAppPage = () => {
         <div className="phone-mockup">
           <div className="phone-screen">
             <div className="phone-logo">
-              <span className="logo-w text-red">W</span><span className="logo-b">B</span>
+              <img src="/assets/images/logo.png" alt="Wearbox Logo" style={{ width: '120px', height: 'auto', objectFit: 'contain' }} />
             </div>
             <p className="phone-coming-soon">App Coming Soon</p>
             <div className="loading-dots">
