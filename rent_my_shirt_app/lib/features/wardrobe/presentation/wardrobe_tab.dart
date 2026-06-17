@@ -3,6 +3,7 @@ import '../../../core/theme/app_colors.dart';
 import 'build_box_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../auth/presentation/login_screen.dart';
+
 class WardrobeTab extends StatefulWidget {
   const WardrobeTab({super.key});
 
@@ -13,6 +14,65 @@ class WardrobeTab extends StatefulWidget {
 class _WardrobeTabState extends State<WardrobeTab> {
   final List<String> _filters = ['All', 'Formal', 'Casual', 'Premium'];
   String _selectedFilter = 'All';
+
+  bool _isLoading = true;
+  List<Map<String, dynamic>> _shirts = [];
+  RealtimeChannel? _realtimeChannel;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchShirts();
+    _setupRealtime();
+  }
+
+  void _setupRealtime() {
+    _realtimeChannel = Supabase.instance.client
+        .channel('public:shirts')
+        .onPostgresChanges(
+          event: PostgresChangeEvent.all,
+          schema: 'public',
+          table: 'shirts',
+          callback: (payload) {
+            debugPrint('Realtime update received: ${payload.eventType}');
+            _fetchShirts(silent: true);
+          },
+        )
+        .subscribe();
+  }
+
+  @override
+  void dispose() {
+    if (_realtimeChannel != null) {
+      Supabase.instance.client.removeChannel(_realtimeChannel!);
+    }
+    super.dispose();
+  }
+
+  Future<void> _fetchShirts({bool silent = false}) async {
+    try {
+      if (!silent) {
+        setState(() {
+          _isLoading = true;
+        });
+      }
+      final data = await Supabase.instance.client
+          .from('shirts')
+          .select('*, shirt_categories(name)')
+          .order('name');
+      setState(() {
+        _shirts = List<Map<String, dynamic>>.from(data);
+        _isLoading = false;
+      });
+    } catch (e) {
+      debugPrint('Error fetching shirts: $e');
+      if (!silent) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +96,7 @@ class _WardrobeTabState extends State<WardrobeTab> {
         body: TabBarView(
           children: [
             _buildShirtsView(),
-            const Center(child: Text('T-Shirts Coming Soon')),
+            _buildTShirtsView(),
           ],
         ),
         floatingActionButton: FloatingActionButton.extended(
@@ -57,6 +117,17 @@ class _WardrobeTabState extends State<WardrobeTab> {
   }
 
   Widget _buildShirtsView() {
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    final filteredShirts = _shirts.where((shirt) {
+      final categoryName = shirt['shirt_categories']?['name'] ?? '';
+      if (categoryName == 'T-Shirts') return false; // Handled in T-Shirts tab
+      if (_selectedFilter == 'All') return true;
+      return categoryName == _selectedFilter;
+    }).toList();
+
     return Column(
       children: [
         SizedBox(
@@ -91,7 +162,9 @@ class _WardrobeTabState extends State<WardrobeTab> {
           ),
         ),
         Expanded(
-          child: GridView.builder(
+          child: filteredShirts.isEmpty
+              ? const Center(child: Text('No shirts found for this category.'))
+              : GridView.builder(
             padding: const EdgeInsets.all(16),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
@@ -99,9 +172,9 @@ class _WardrobeTabState extends State<WardrobeTab> {
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
             ),
-            itemCount: 6,
+            itemCount: filteredShirts.length,
             itemBuilder: (context, index) {
-              return _buildProductCard(index);
+              return _buildProductCard(filteredShirts[index]);
             },
           ),
         ),
@@ -109,10 +182,39 @@ class _WardrobeTabState extends State<WardrobeTab> {
     );
   }
 
-  Widget _buildProductCard(int index) {
-    final colors = [Colors.blue.shade100, Colors.grey.shade200, Colors.pink.shade100, Colors.black87, Colors.blue.shade800, Colors.white];
-    final titles = ['White Oxford', 'Sky Blue', 'Grey Textured', 'Pink Stripe', 'Navy Check', 'Black Solid'];
-    final price = '₹899';
+  Widget _buildTShirtsView() {
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    final tShirts = _shirts.where((shirt) {
+      final categoryName = shirt['shirt_categories']?['name'] ?? '';
+      return categoryName == 'T-Shirts';
+    }).toList();
+
+    if (tShirts.isEmpty) {
+      return const Center(child: Text('No T-Shirts available right now.'));
+    }
+
+    return GridView.builder(
+      padding: const EdgeInsets.all(16),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 0.7,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+      ),
+      itemCount: tShirts.length,
+      itemBuilder: (context, index) {
+        return _buildProductCard(tShirts[index]);
+      },
+    );
+  }
+
+  Widget _buildProductCard(Map<String, dynamic> shirt) {
+    final title = shirt['name'] ?? 'Unknown';
+    final price = '₹${shirt['price_1_day'] ?? 899}';
+    final imageUrl = shirt['image_url'];
 
     return Container(
       decoration: BoxDecoration(
@@ -127,11 +229,22 @@ class _WardrobeTabState extends State<WardrobeTab> {
             child: Stack(
               children: [
                 Container(
-                  decoration: BoxDecoration(
-                    color: colors[index % colors.length],
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFF5F5F5),
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
                   ),
-                  child: const Center(child: Icon(Icons.checkroom, size: 48, color: Colors.black26)),
+                  child: imageUrl != null && imageUrl.toString().isNotEmpty
+                      ? ClipRRect(
+                          borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                          child: Image.network(
+                            imageUrl,
+                            width: double.infinity,
+                            height: double.infinity,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) => const Center(child: Icon(Icons.checkroom, size: 48, color: Colors.black26)),
+                          ),
+                        )
+                      : const Center(child: Icon(Icons.checkroom, size: 48, color: Colors.black26)),
                 ),
                 Positioned(
                   top: 8,
@@ -153,7 +266,7 @@ class _WardrobeTabState extends State<WardrobeTab> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(titles[index % titles.length], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14), maxLines: 1, overflow: TextOverflow.ellipsis),
                 const SizedBox(height: 4),
                 Text(price, style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
               ],
