@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
-import { FiGlobe as Globe, FiArrowRight as ArrowRight, FiInstagram as Instagram, FiTwitter as Twitter, FiArrowLeft as ArrowLeft } from 'react-icons/fi';
+import { FiGlobe as Globe, FiArrowRight as ArrowRight, FiInstagram as Instagram, FiTwitter as Twitter, FiArrowLeft as ArrowLeft, FiCheck as Check } from 'react-icons/fi';
 
 function AdminLogin() {
   const [email, setEmail] = useState('');
+  const [token, setToken] = useState('');
+  const [otpSent, setOtpSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
@@ -103,18 +105,42 @@ function AdminLogin() {
     }
 
     try {
-      const { error } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          emailRedirectTo: `${window.location.origin}/admin`
-        }
+      // Use the custom edge function to match the mobile app's custom email template
+      const { error } = await supabase.functions.invoke('send-otp', {
+        body: { email }
       });
 
       if (error) throw error;
-      setMessage('A magic link has been sent to your email.');
+      setOtpSent(true);
+      setMessage('A secure code has been sent to your email.');
     } catch (error) {
       console.error('Error sending OTP:', error.message);
       setMessage(error.message || 'Failed to send OTP. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage('');
+
+    try {
+      const { error, data } = await supabase.auth.verifyOtp({
+        email,
+        token,
+        type: 'magiclink' // Match OtpType.magiclink from mobile app
+      });
+
+      if (error) throw error;
+      
+      if (data?.session) {
+        navigate('/admin');
+      }
+    } catch (error) {
+      console.error('Error verifying OTP:', error.message);
+      setMessage('Invalid code. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -163,7 +189,9 @@ function AdminLogin() {
             </h1>
             
             <p className="text-white/80 text-sm leading-relaxed mb-8 px-2 text-center">
-              Securely authenticate to access the Wearbox admin dashboard. A magic link will be sent to your inbox.
+              {otpSent 
+                ? 'Enter the 6-digit code sent to your email to authenticate.' 
+                : 'Securely authenticate to access the Wearbox admin dashboard.'}
             </p>
             
             {message && (
@@ -172,27 +200,59 @@ function AdminLogin() {
               </div>
             )}
             
-            <form onSubmit={handleSendOtp} className="w-full flex flex-col gap-4">
-              <div className="relative">
-                <input 
-                  type="email" 
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="name@example.com" 
-                  required
-                  disabled={loading}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 outline-none text-white placeholder-white-40 text-base focus:border-white/30 focus:bg-white/10 transition-all text-center"
-                />
-              </div>
-              <button 
-                type="submit" 
-                disabled={loading} 
-                className="w-full bg-white text-black font-semibold rounded-xl px-5 py-4 hover:bg-gray-200 transition-colors cursor-pointer flex items-center justify-center gap-2 disabled:opacity-70 mt-2"
-              >
-                {loading ? 'Sending...' : 'Send Magic Link'}
-                {!loading && <ArrowRight size={18} />}
-              </button>
-            </form>
+            {!otpSent ? (
+              <form onSubmit={handleSendOtp} className="w-full flex flex-col gap-4">
+                <div className="relative">
+                  <input 
+                    type="email" 
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="name@example.com" 
+                    required
+                    disabled={loading}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 outline-none text-white placeholder-white-40 text-base focus:border-white/30 focus:bg-white/10 transition-all text-center"
+                  />
+                </div>
+                <button 
+                  type="submit" 
+                  disabled={loading} 
+                  className="w-full bg-white text-black font-semibold rounded-xl px-5 py-4 hover:bg-gray-200 transition-colors cursor-pointer flex items-center justify-center gap-2 disabled:opacity-70 mt-2"
+                >
+                  {loading ? 'Sending...' : 'Send Code'}
+                  {!loading && <ArrowRight size={18} />}
+                </button>
+              </form>
+            ) : (
+              <form onSubmit={handleVerifyOtp} className="w-full flex flex-col gap-4">
+                <div className="relative">
+                  <input 
+                    type="text" 
+                    value={token}
+                    onChange={(e) => setToken(e.target.value)}
+                    placeholder="Enter verification code" 
+                    required
+                    disabled={loading}
+                    maxLength={10}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 outline-none text-white placeholder-white-40 focus:border-white/30 focus:bg-white/10 transition-all text-center tracking-widest text-2xl font-mono"
+                  />
+                </div>
+                <button 
+                  type="submit" 
+                  disabled={loading} 
+                  className="w-full bg-white text-black font-semibold rounded-xl px-5 py-4 hover:bg-gray-200 transition-colors cursor-pointer flex items-center justify-center gap-2 disabled:opacity-70 mt-2"
+                >
+                  {loading ? 'Verifying...' : 'Verify & Login'}
+                  {!loading && <Check size={18} />}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setOtpSent(false); setToken(''); setMessage(''); }}
+                  className="text-white/60 hover:text-white text-sm mt-4 transition-colors cursor-pointer bg-transparent border-none"
+                >
+                  Use a different email
+                </button>
+              </form>
+            )}
           </div>
         </div>
       </div>
