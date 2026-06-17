@@ -1,0 +1,98 @@
+.how-it-works {
+  /* section space handles margins */
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 32px;
+}
+
+.section-title {
+  font-size: 32px;
+}
+
+.view-all {
+  color: var(--primary-red);
+  font-weight: 700;
+}
+
+.steps-container {
+  display: flex;
+  gap: 24px;
+}
+
+.step-card {
+  flex: 1;
+  background-color: var(--bg-light-grey);
+  border-radius: 16px;
+  padding: 32px;
+  height: 250px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.step-num {
+  color: var(--primary-red);
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.step-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.step-desc {
+  color: var(--text-grey);
+}
+
+.step-content {
+  position: relative;
+  z-index: 2;
+  width: 60%;
+}
+
+.step-image-wrapper {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  height: 90%;
+  z-index: 1;
+  text-align: right;
+}
+
+.step-image {
+  height: 100%;
+  object-fit: cover;
+  object-position: bottom right;
+}
+
+@media (max-width: 1024px) {
+  .step-card {
+    padding: 24px;
+  }
+  .step-title {
+    font-size: 18px;
+  }
+  .step-desc {
+    font-size: 14px;
+  }
+  .step-content {
+    width: 65%;
+  }
+}
+
+@media (max-width: 768px) {
+  .steps-container {
+    flex-direction: column;
+  }
+  .step-content {
+    width: 60%;
+  }
+}

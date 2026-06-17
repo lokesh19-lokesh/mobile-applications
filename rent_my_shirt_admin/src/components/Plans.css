@@ -1,0 +1,89 @@
+.section-subtitle {
+  color: var(--text-grey);
+  font-size: 16px;
+  margin-top: 8px;
+}
+
+.plans-container {
+  display: flex;
+  gap: 24px;
+}
+
+.plan-card {
+  flex: 1;
+  background-color: white;
+  border-radius: 16px;
+  border: 1px solid var(--border-light);
+  padding: 32px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.plan-card.popular {
+  border: 2px solid var(--primary-red);
+  box-shadow: 0 10px 30px rgba(244, 67, 54, 0.1);
+}
+
+.popular-badge {
+  text-align: center;
+  color: var(--primary-red);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  margin-bottom: 16px;
+}
+
+.plan-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.plan-price {
+  font-size: 40px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  color: var(--text-dark);
+}
+
+.plan-month {
+  font-size: 16px;
+  font-weight: normal;
+  color: var(--text-grey);
+}
+
+.plan-feature {
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.plan-desc {
+  color: var(--text-grey);
+  margin-bottom: 32px;
+  flex-grow: 1;
+}
+
+.plan-btn {
+  width: 100%;
+}
+
+.btn-outline-red {
+  background: white;
+  color: var(--primary-red);
+  border: none;
+  text-align: left;
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 8px;
+}
+
+.btn-outline-red:hover {
+  background: var(--bg-light-grey);
+}
+
+@media (max-width: 768px) {
+  .plans-container {
+    flex-direction: column;
+  }
+}
